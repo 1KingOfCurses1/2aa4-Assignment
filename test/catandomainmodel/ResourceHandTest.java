@@ -23,7 +23,7 @@ public class ResourceHandTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_constructor_initializesAllResourcesToZero() {
+    void testConstructorInitializesAllResourcesToZero() {
         assertEquals(0, hand.getBrick(), "brick starts at 0");
         assertEquals(0, hand.getLumber(), "lumber starts at 0");
         assertEquals(0, hand.getWool(), "wool starts at 0");
@@ -34,7 +34,7 @@ public class ResourceHandTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_add_increasesCountAndTotalCards() {
+    void testAddIncreasesCountAndTotalCards() {
         hand.add(ResourceType.GRAIN, 2);
         assertEquals(2, hand.getAmount(ResourceType.GRAIN), "grain after adding 2");
         assertEquals(2, hand.getTotalCards(), "total after adding 2 grain");
@@ -43,7 +43,7 @@ public class ResourceHandTest {
     // Partition testing: affordable vs not-affordable are two input classes
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_canAfford_partition_affordableVsNotAffordable() {
+    void testCanAffordPartitionAffordableVsNotAffordable() {
         hand.add(ResourceType.BRICK, 1);
         hand.add(ResourceType.LUMBER, 1);
 
@@ -59,7 +59,7 @@ public class ResourceHandTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_spend_deductsExactly_whenAffordable_otherwiseNoChange() {
+    void testSpendDeductsExactlyWhenAffordableOtherwiseNoChange() {
         hand.add(ResourceType.WOOL, 2);
         hand.add(ResourceType.GRAIN, 1);
 

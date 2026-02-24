@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Timeout;
 public class BoardTest {
 
     private static final int DEFAULT_TIMEOUT_MS = 2000;
+    private static final String STUBS_SHOULD_RETURN_FALSE = "stubs should return false";
     private Board board;
     private List<Tile> tiles;
     private List<Node> nodes;
@@ -27,7 +28,7 @@ public class BoardTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_getTileNodeEdge_returnsCorrectObjectById() {
+    void testGetTileNodeEdgeReturnsCorrectObjectById() {
         assertEquals(tiles.get(0), board.getTile(1), "should find tile 1");
         assertNull(board.getTile(99), "should not find non-existent tile");
 
@@ -39,17 +40,17 @@ public class BoardTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_isValidPlacements_currentlyReturnFalse() {
+    void testIsValidPlacementsCurrentlyReturnFalse() {
         // These are currently stubs being tested for their default behavior (R1.1)
         Player p = new Player(1);
-        assertFalse(board.isValidSettlementPlacement(nodes.get(0), p), "stubs should return false");
-        assertFalse(board.isValidRoadPlacement(edges.get(0), p), "stubs should return false");
-        assertFalse(board.isValidCityPlacement(nodes.get(0), p), "stubs should return false");
+        assertFalse(board.isValidSettlementPlacement(nodes.get(0), p), STUBS_SHOULD_RETURN_FALSE);
+        assertFalse(board.isValidRoadPlacement(edges.get(0), p), STUBS_SHOULD_RETURN_FALSE);
+        assertFalse(board.isValidCityPlacement(nodes.get(0), p), STUBS_SHOULD_RETURN_FALSE);
     }
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_getAdjacent_currentlyReturnEmpty() {
+    void testGetAdjacentCurrentlyReturnEmpty() {
         // More stubs
         assertTrue(board.getAdjacentNodes(nodes.get(0)).isEmpty(), "stubs should return empty list");
         assertTrue(board.getAdjacentEdges(nodes.get(0)).isEmpty(), "stubs should return empty list");

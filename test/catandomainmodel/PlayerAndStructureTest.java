@@ -13,7 +13,7 @@ public class PlayerAndStructureTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_addStructure_incrementsVictoryPoints_byStructureVP() {
+    void testAddStructureIncrementsVictoryPointsByStructureVP() {
         Player p = new Player(1);
         assertEquals(0, p.getVictoryPoints(), "VP starts at 0");
 
@@ -27,7 +27,7 @@ public class PlayerAndStructureTest {
     // boundary test for needsToSpendCards: >7
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_needsToSpendCards_boundary_falseAt7_trueAt8() {
+    void testNeedsToSpendCardsBoundaryFalseAt7TrueAt8() {
         Player p = new Player(2);
 
         p.getResourceHand().add(ResourceType.BRICK, 7);

@@ -17,14 +17,14 @@ public class ConfigurationTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_defaultMaxRounds() {
+    void testDefaultMaxRounds() {
         Configuration config = new Configuration();
         assertEquals(500, config.getMaxRounds(), "Default max rounds should be 500");
     }
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_loadFromFile_updatesMaxRounds(@TempDir Path tempDir) throws IOException {
+    void testLoadFromFileUpdatesMaxRounds(@TempDir Path tempDir) throws IOException {
         Path configFile = tempDir.resolve("config.txt");
         Files.writeString(configFile, "turns: 100\nsome_other_key: 10");
 

@@ -13,7 +13,7 @@ public class EdgeAndActionTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_edge_addNode_boundary_allowsOnlyTwoNodes() {
+    void testEdgeAddNodeBoundaryAllowsOnlyTwoNodes() {
         Edge e = new Edge(1);
 
         Node n1 = new Node(1);
@@ -31,7 +31,7 @@ public class EdgeAndActionTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_action_toString_matchesConsoleFormat() {
+    void testActionToStringMatchesConsoleFormat() {
         Action a = new Action(12, 4, "PASS");
         assertEquals("[12] / [4]: PASS", a.toString(), "action string format");
     }

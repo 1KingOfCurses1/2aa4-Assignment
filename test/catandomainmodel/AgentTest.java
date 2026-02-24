@@ -14,7 +14,7 @@ public class AgentTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_chooseRandomAction_returnsNull_forNullOrEmptyList() {
+    void testChooseRandomActionReturnsNullForNullOrEmptyList() {
         Agent a = new Agent(new Player(1));
         assertNull(a.chooseRandomAction(null), "null list should yield null");
         assertNull(a.chooseRandomAction(List.of()), "empty list should yield null");
@@ -22,7 +22,7 @@ public class AgentTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_rollDice_alwaysInRange2to12_overManyRolls() {
+    void testRollDiceAlwaysInRange2To12OverManyRolls() {
         Agent a = new Agent(new Player(1));
         for (int i = 0; i < 5000; i++) {
             int roll = a.rollDice();
@@ -32,7 +32,7 @@ public class AgentTest {
 
     @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
     @Test
-    void test_takeTurn_includesBuildCityOnlyWhenPlayerHasStructure() {
+    void testTakeTurnIncludesBuildCityOnlyWhenPlayerHasStructure() {
         Player p = new Player(7);
         Agent a = new Agent(p);
 

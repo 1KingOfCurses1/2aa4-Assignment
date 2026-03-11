@@ -4,55 +4,47 @@
 
 package catandomainmodel;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /************************************************************/
 /**
- * 
+ * An edge on the board connecting two nodes, where roads can be placed.
  */
 public class Edge {
-	/**
-	 * 
-	 */
-	private int id;
-	/**
-	 * 
-	 */
-	private List<Node> nodes;
 
-	/**
-	 * 
-	 * @param id 
-	 */
-	public Edge(int id) {
-		this.id = id;
-		this.nodes = new ArrayList<>();
-	}
+    private int id;
+    private List<Node> nodes;
+    private Road road;    // 0..1 per UML
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getId() {
-		return id;
-	}
+    public Edge(int id) {
+        this.id = id;
+        this.nodes = new ArrayList<>();
+        this.road = null;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public List<Node> getNodes() {
-		return nodes;
-	}
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * 
-	 * @param node 
-	 */
-	public void addNode(Node node) {
-		if (nodes.size() < 2) {
-			nodes.add(node);
-		}
-	}
+    /**
+     * Add a node to this edge. An edge connects at most 2 nodes.
+     */
+    public void addNode(Node node) {
+        if (nodes.size() < 2) {
+            nodes.add(node);
+        }
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    public Road getRoad() {
+        return road;
+    }
+
+    public void setRoad(Road road) {
+        this.road = road;
+    }
 }

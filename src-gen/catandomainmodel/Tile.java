@@ -6,55 +6,29 @@ package catandomainmodel;
 
 /************************************************************/
 /**
- * 
+ * A hex tile on the board with a resource type and dice number.
  */
 public class Tile {
-	/**
-	 * 
-	 */
-	private int id;
-	/**
-	 * 
-	 */
-	private ResourceType resourceType;
-	/**
-	 * 
-	 */
-	private int number;
 
-	/**
-	 * 
-	 * @param id 
-	 * @param resourceType 
-	 * @param number 
-	 */
-	public Tile(int id, ResourceType resourceType, int number) {
-		this.id = id;
-		this.resourceType = resourceType;
-		this.number = number;
-	}
+    private int id;
+    private ResourceType resourceType;
+    private int number;
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getId() {
-		return id;
-	}
+    public Tile(int id, ResourceType resourceType, int number) {
+        this.id = id;
+        this.resourceType = resourceType;
+        this.number = number;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public ResourceType getResourceType() {
-		return resourceType;
-	}
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getNumber() {
-		return number;
-	}
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
+
+    public int getNumber() {
+        return number;
+    }
 }

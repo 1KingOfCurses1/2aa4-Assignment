@@ -8,25 +8,33 @@ package catandomainmodel;
 /**
  * 
  */
-public enum ResourceType {
+public enum ActionType {
 	/**
 	 * 
 	 */
-	BRICK,
+	ROLL,
 	/**
 	 * 
 	 */
-	WOOL,
+	BUILD_SETTLEMENT,
 	/**
 	 * 
 	 */
-	LUMBER,
+	BUILD_CITY,
 	/**
 	 * 
 	 */
-	GRAIN,
+	BUILD_ROAD,
 	/**
 	 * 
 	 */
-	ORE;
+	TRADE,
+	/**
+	 * 
+	 */
+	PASS,
+	/**
+	 * 
+	 */
+	LIST;
 }

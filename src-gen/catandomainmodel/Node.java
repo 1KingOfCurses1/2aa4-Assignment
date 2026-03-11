@@ -6,56 +6,27 @@ package catandomainmodel;
 
 /************************************************************/
 /**
- * 
+ * A node (intersection) on the board where structures can be placed.
  */
 public class Node {
-	/**
-	 * 
-	 */
-	private Structure structure;
-	/**
-	 * 
-	 */
-	private int id;
 
-	/**
-	 * 
-	 * @param id 
-	 */
-	public Node(int id) {
-		this.id = id;
-		this.structure = null;
-	}
+    private int id;
+    private Structure structure;   // 0..1 per UML
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getId() {
-		return id;
-	}
+    public Node(int id) {
+        this.id = id;
+        this.structure = null;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public Structure getStructure() {
-		return structure;
-	}
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * 
-	 * @param structure 
-	 */
-	public void setStructure(Structure structure) {
-		this.structure = structure;
-	}
+    public Structure getStructure() {
+        return structure;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public boolean hasStructure() {
-		return structure != null;
-	}
+    public void setStructure(Structure structure) {
+        this.structure = structure;
+    }
 }

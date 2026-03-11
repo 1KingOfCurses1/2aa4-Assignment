@@ -10,49 +10,36 @@ import java.io.IOException;
 
 /************************************************************/
 /**
- * 
+ * Holds game configuration parameters.
  */
 public class Configuration {
-	/**
-	 * 
-	 */
-	private int maxRounds;
 
-	/**
-	 * 
-	 */
-	public Configuration() {
-		this.maxRounds = 500; // Safety-net maximum; game should end via VP threshold first
-	}
+    private int maxRounds;
 
-	/**
-	 * 
-	 * @param filePath
-	 * @return
-	 */
-	public void loadFromFile(String filePath) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("turns:")) {
-					String[] parts = line.split(":");
-					if (parts.length == 2) {
-						this.maxRounds = Integer.parseInt(parts[1].trim());
-					}
-				}
-			}
-		} catch (IOException e) {
-			System.err.println("Error reading configuration file: " + e.getMessage());
-		} catch (NumberFormatException e) {
-			System.err.println("Error parsing maxRounds value: " + e.getMessage());
-		}
-	}
+    public Configuration() {
+        this.maxRounds = 500;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public int getMaxRounds() {
-		return maxRounds;
-	}
+    /**
+     * Loads configuration from a text file.
+     * Expects lines like "turns: 100".
+     */
+    public void loadFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("turns:")) {
+                    String value = line.substring("turns:".length()).trim();
+                    this.maxRounds = Integer.parseInt(value);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            // Keep default if file can't be read
+        }
+    }
+
+    public int getMaxRounds() {
+        return maxRounds;
+    }
 }

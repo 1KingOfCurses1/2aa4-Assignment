@@ -4,171 +4,59 @@
 
 package catandomainmodel;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /************************************************************/
 /**
- * 
+ * A player in the game, identified by an integer ID.
  */
 public class Player {
-	/**
-	 * 
-	 */
-	private int id;
-	/**
-	 * 
-	 */
-	private int victoryPoints;
-	/**
-	 * 
-	 */
-	private ResourceHand resourceHand;
-	/**
-	 * 
-	 */
-	private List<Structure> structures;
-	/**
-	 * 
-	 */
-	private List<Road> roads;
 
-	/**
-	 * 
-	 * @param id 
-	 */
-	public Player(int id) {
-		this.id = id;
-		this.victoryPoints = 0;
-		this.resourceHand = new ResourceHand();
-		this.structures = new ArrayList<>();
-		this.roads = new ArrayList<>();
-	}
+    private int id;
+    private int victoryPoints;
+    private List<Structure> structures;
+    private ResourceHand resourceHand;
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getId() {
-		return id;
-	}
+    public Player(int id) {
+        this.id = id;
+        this.victoryPoints = 0;
+        this.structures = new ArrayList<>();
+        this.resourceHand = new ResourceHand();
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getVictoryPoints() {
-		return victoryPoints;
-	}
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * 
-	 * @param delta 
-	 */
-	public void addVictoryPoints(int delta) {
-		this.victoryPoints += delta;
-	}
+    public int getVictoryPoints() {
+        return victoryPoints;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public ResourceHand getResourceHand() {
-		return resourceHand;
-	}
+    public ResourceHand getResourceHand() {
+        return resourceHand;
+    }
 
-	/**
-	 * 
-	 * @param structure 
-	 */
-	public void addStructure(Structure structure) {
-		structures.add(structure);
-		victoryPoints += structure.getVictoryPoints();
-	}
+    public List<Structure> getStructures() {
+        return structures;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public List<Structure> getStructures() {
-		return structures;
-	}
+    /**
+     * Adds a structure and updates victory points accordingly.
+     */
+    public void addStructure(Structure s) {
+        structures.add(s);
+        victoryPoints += s.getVictoryPoints();
+        // Also place the structure on its node
+        if (s.getLocation() != null) {
+            s.getLocation().setStructure(s);
+        }
+    }
 
-	/**
-	 * 
-	 * @param road 
-	 */
-	public void addRoad(Road road) {
-		roads.add(road);
-	}
-
-	/**
-	 * 
-	 * @return 
-	 */
-	public List<Road> getRoads() {
-		return roads;
-	}
-
-	/**
-	 * 
-	 * @param node 
-	 * @return 
-	 */
-	public boolean buildSettlement(Node node) {
-		// To be implemented
-		return false;
-	}
-
-	/**
-	 * 
-	 * @param node 
-	 * @return 
-	 */
-	public boolean buildCity(Node node) {
-		// To be implemented
-		return false;
-	}
-
-	/**
-	 * 
-	 * @param edge 
-	 * @return 
-	 */
-	public boolean buildRoad(Edge edge) {
-		// To be implemented
-		return false;
-	}
-
-	/**
-	 * 
-	 * @param diceRoll 
-	 * @param board 
-	 */
-	public void collectResources(int diceRoll, Board board) {
-		// To be implemented
-	}
-
-	/**
-	 * 
-	 * @param diceRoll 
-	 */
-	public void takeTurn(int diceRoll) {
-		// To be implemented
-	}
-
-	/**
-	 * 
-	 * @return 
-	 */
-	public boolean needsToSpendCards() {
-		return resourceHand.getTotalCards() > 7;
-	}
-
-	/**
-	 * 
-	 */
-	public void tryRandomBuild() {
-		// To be implemented
-	}
+    /**
+     * Returns true if the player has more than 7 resource cards (robber rule).
+     */
+    public boolean needsToSpendCards() {
+        return resourceHand.getTotalCards() > 7;
+    }
 }

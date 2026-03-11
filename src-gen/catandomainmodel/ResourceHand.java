@@ -4,137 +4,89 @@
 
 package catandomainmodel;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /************************************************************/
 /**
- * 
+ * Represents a hand of resource cards held by a player.
  */
 public class ResourceHand {
-	/**
-	 * 
-	 */
-	private Map<ResourceType, Integer> resources;
 
-	/**
-	 * 
-	 */
-	public ResourceHand() {
-		resources = new HashMap<>();
-		// Initialize with 0 of each resource type
-		resources.put(ResourceType.BRICK, 0);
-		resources.put(ResourceType.LUMBER, 0);
-		resources.put(ResourceType.WOOL, 0);
-		resources.put(ResourceType.GRAIN, 0);
-		resources.put(ResourceType.ORE, 0);
-	}
+    private Map<ResourceType, Integer> resources;
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getBrick() {
-		return resources.get(ResourceType.BRICK);
-	}
+    public ResourceHand() {
+        resources = new EnumMap<>(ResourceType.class);
+        for (ResourceType type : ResourceType.values()) {
+            resources.put(type, 0);
+        }
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getLumber() {
-		return resources.get(ResourceType.LUMBER);
-	}
+    public int getBrick() {
+        return resources.getOrDefault(ResourceType.BRICK, 0);
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getWool() {
-		return resources.get(ResourceType.WOOL);
-	}
+    public int getLumber() {
+        return resources.getOrDefault(ResourceType.LUMBER, 0);
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getGrain() {
-		return resources.get(ResourceType.GRAIN);
-	}
+    public int getWool() {
+        return resources.getOrDefault(ResourceType.WOOL, 0);
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getOre() {
-		return resources.get(ResourceType.ORE);
-	}
+    public int getGrain() {
+        return resources.getOrDefault(ResourceType.GRAIN, 0);
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public int getTotalCards() {
-		int total = 0;
-		for (Integer count : resources.values()) {
-			total += count;
-		}
-		return total;
-	}
+    public int getOre() {
+        return resources.getOrDefault(ResourceType.ORE, 0);
+    }
 
-	/**
-	 * 
-	 * @param type 
-	 * @param amount 
-	 * @return 
-	 */
-	public void add(ResourceType type, int amount) {
-		Integer current = resources.get(type);
-		if (current != null) {
-			resources.put(type, current + amount);
-		}
-	}
+    public int getAmount(ResourceType type) {
+        return resources.getOrDefault(type, 0);
+    }
 
-	/**
-	 * 
-	 * @param type 
-	 * @return 
-	 */
-	public int getAmount(ResourceType type) {
-		Integer amount = resources.get(type);
-		return amount != null ? amount : 0;
-	}
+    public int getTotalCards() {
+        int total = 0;
+        for (int count : resources.values()) {
+            total += count;
+        }
+        return total;
+    }
 
-	/**
-	 * 
-	 * @param cost 
-	 * @return 
-	 */
-	public boolean canAfford(Map<ResourceType, Integer> cost) {
-		for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-			if (getAmount(entry.getKey()) < entry.getValue()) {
-				return false;
-			}
-		}
-		return true;
-	}
+    public void add(ResourceType type, int amount) {
+        resources.put(type, resources.getOrDefault(type, 0) + amount);
+    }
 
-	/**
-	 * 
-	 * @param cost 
-	 * @return 
-	 */
-	public boolean spend(Map<ResourceType, Integer> cost) {
-		if (!canAfford(cost)) {
-			return false;
-		}
-		
-		for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-			ResourceType type = entry.getKey();
-			Integer amount = entry.getValue();
-			resources.put(type, resources.get(type) - amount);
-		}
-		
-		return true;
-	}
+    public void remove(ResourceType type, int amount) {
+        int current = resources.getOrDefault(type, 0);
+        resources.put(type, Math.max(0, current - amount));
+    }
+
+    public boolean canAfford(Map<ResourceType, Integer> cost) {
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            if (resources.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean spend(Map<ResourceType, Integer> cost) {
+        if (!canAfford(cost)) {
+            return false;
+        }
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            resources.put(entry.getKey(),
+                    resources.get(entry.getKey()) - entry.getValue());
+        }
+        return true;
+    }
+
+    /**
+     * Returns the internal resource map (for serialization / export).
+     */
+    public Map<ResourceType, Integer> getResources() {
+        return new EnumMap<>(resources);
+    }
 }

@@ -6,24 +6,16 @@ package catandomainmodel;
 
 /************************************************************/
 /**
- * 
+ * A city placed on a node (upgrade from Settlement), worth 2 victory points.
  */
 public class City extends Structure {
-	/**
-	 * 
-	 * @param owner 
-	 * @param location 
-	 */
-	public City(Player owner, Node location) {
-		super(owner, location);
-	}
 
-	/**
-	 * 
-	 * @return 
-	 */
-	@Override
-	public int getVictoryPoints() {
-		return 2;
-	}
+    public City(Player owner, Node location) {
+        super(owner, location);
+    }
+
+    @Override
+    public int getVictoryPoints() {
+        return 2;
+    }
 }

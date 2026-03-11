@@ -4,142 +4,210 @@
 
 package catandomainmodel;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /************************************************************/
 /**
- * 
+ * The game board containing tiles, nodes, and edges.
+ * Provides placement legality checks and adjacency queries.
  */
 public class Board {
-	/**
-	 * 
-	 */
-	private List<Tile> tiles;
-	/**
-	 * 
-	 */
-	private List<Node> nodes;
-	/**
-	 * 
-	 */
-	private List<Edge> edges;
 
-	/**
-	 * 
-	 * @param tiles 
-	 * @param nodes 
-	 * @param edges 
-	 */
-	public Board(List<Tile> tiles, List<Node> nodes, List<Edge> edges) {
-		this.tiles = tiles;
-		this.nodes = nodes;
-		this.edges = edges;
-	}
+    private List<Tile> tiles;
+    private List<Node> nodes;
+    private List<Edge> edges;
+    private Robber robber;
 
-	/**
-	 * 
-	 * @param id 
-	 * @return 
-	 */
-	public Tile getTile(int id) {
-		for (Tile tile : tiles) {
-			if (tile.getId() == id) {
-				return tile;
-			}
-		}
-		return null;
-	}
+    public Board(List<Tile> tiles, List<Node> nodes, List<Edge> edges) {
+        this.tiles = new ArrayList<>(tiles);
+        this.nodes = new ArrayList<>(nodes);
+        this.edges = new ArrayList<>(edges);
+        this.robber = new Robber();
+    }
 
-	/**
-	 * 
-	 * @param id 
-	 * @return 
-	 */
-	public Node getNode(int id) {
-		for (Node node : nodes) {
-			if (node.getId() == id) {
-				return node;
-			}
-		}
-		return null;
-	}
+    // ---- Lookup by ID ----
 
-	/**
-	 * 
-	 * @param id 
-	 * @return 
-	 */
-	public Edge getEdge(int id) {
-		for (Edge edge : edges) {
-			if (edge.getId() == id) {
-				return edge;
-			}
-		}
-		return null;
-	}
+    public Tile getTile(int id) {
+        for (Tile t : tiles) {
+            if (t.getId() == id) {
+                return t;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * 
-	 * @param node 
-	 * @param player 
-	 * @return 
-	 */
-	public boolean isValidSettlementPlacement(Node node, Player player) {
-		// To be implemented
-		return false;
-	}
+    public Node getNode(int id) {
+        for (Node n : nodes) {
+            if (n.getId() == id) {
+                return n;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * 
-	 * @param edge 
-	 * @param player 
-	 * @return 
-	 */
-	public boolean isValidRoadPlacement(Edge edge, Player player) {
-		// To be implemented
-		return false;
-	}
+    public Edge getEdge(int id) {
+        for (Edge e : edges) {
+            if (e.getId() == id) {
+                return e;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * 
-	 * @param node 
-	 * @param player 
-	 * @return 
-	 */
-	public boolean isValidCityPlacement(Node node, Player player) {
-		// To be implemented
-		return false;
-	}
+    // ---- Placement legality ----
 
-	/**
-	 * 
-	 * @param node 
-	 * @return 
-	 */
-	public List<Node> getAdjacentNodes(Node node) {
-		// To be implemented
-		return new ArrayList<>();
-	}
+    /**
+     * A settlement can be placed on a node if:
+     * 1. The node has no existing structure.
+     * 2. No adjacent node already has a structure (distance rule).
+     */
+    public boolean isValidSettlementPlacement(Node node, Player player) {
+        if (node == null || player == null) {
+            return false;
+        }
+        // Node must be empty
+        if (node.getStructure() != null) {
+            return false;
+        }
+        // Distance rule: no adjacent node may have a structure
+        List<Node> adjacent = getAdjacentNodes(node);
+        for (Node adj : adjacent) {
+            if (adj.getStructure() != null) {
+                return false;
+            }
+        }
+        // Must have a connecting road owned by this player (unless it is the
+        // setup phase, which we approximate by checking if the player has no structures)
+        if (!player.getStructures().isEmpty()) {
+            boolean hasConnectingRoad = false;
+            List<Edge> adjEdges = getAdjacentEdges(node);
+            for (Edge e : adjEdges) {
+                if (e.getRoad() != null && e.getRoad().getOwner().getId() == player.getId()) {
+                    hasConnectingRoad = true;
+                    break;
+                }
+            }
+            if (!hasConnectingRoad) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * 
-	 * @param node 
-	 * @param player 
-	 * @return 
-	 */
-	public boolean hasAdjacentStructures(Node node, Player player) {
-		// To be implemented
-		return false;
-	}
+    /**
+     * A road can be placed on an edge if:
+     * 1. The edge has no existing road.
+     * 2. The player has a structure or road connected to one end.
+     */
+    public boolean isValidRoadPlacement(Edge edge, Player player) {
+        if (edge == null || player == null) {
+            return false;
+        }
+        // Edge must be empty
+        if (edge.getRoad() != null) {
+            return false;
+        }
+        // Must connect to a structure or existing road owned by the player
+        for (Node n : edge.getNodes()) {
+            // Connected structure owned by this player?
+            if (n.getStructure() != null
+                    && n.getStructure().getOwner().getId() == player.getId()) {
+                return true;
+            }
+            // Connected road owned by this player?
+            List<Edge> adjEdges = getAdjacentEdges(n);
+            for (Edge adj : adjEdges) {
+                if (adj != edge && adj.getRoad() != null
+                        && adj.getRoad().getOwner().getId() == player.getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * 
-	 * @param node 
-	 * @return 
-	 */
-	public List<Edge> getAdjacentEdges(Node node) {
-		// To be implemented
-		return new ArrayList<>();
-	}
+    /**
+     * A city can be placed on a node if:
+     * 1. The node has an existing settlement owned by the player.
+     */
+    public boolean isValidCityPlacement(Node node, Player player) {
+        if (node == null || player == null) {
+            return false;
+        }
+        Structure s = node.getStructure();
+        if (s == null) {
+            return false;
+        }
+        return (s instanceof Settlement)
+                && s.getOwner().getId() == player.getId();
+    }
+
+    // ---- Adjacency queries ----
+
+    /**
+     * Returns all nodes adjacent to the given node
+     * (connected by an edge that has both nodes set).
+     */
+    public List<Node> getAdjacentNodes(Node node) {
+        List<Node> adjacent = new ArrayList<>();
+        for (Edge e : edges) {
+            List<Node> eNodes = e.getNodes();
+            if (eNodes.size() == 2) {
+                if (eNodes.get(0).getId() == node.getId()) {
+                    adjacent.add(eNodes.get(1));
+                } else if (eNodes.get(1).getId() == node.getId()) {
+                    adjacent.add(eNodes.get(0));
+                }
+            }
+        }
+        return adjacent;
+    }
+
+    /**
+     * Returns all edges connected to the given node.
+     */
+    public List<Edge> getAdjacentEdges(Node node) {
+        List<Edge> adjacent = new ArrayList<>();
+        for (Edge e : edges) {
+            for (Node n : e.getNodes()) {
+                if (n.getId() == node.getId()) {
+                    adjacent.add(e);
+                    break;
+                }
+            }
+        }
+        return adjacent;
+    }
+
+    /**
+     * Returns true if any adjacent node has a structure (used for distance rule).
+     */
+    public boolean hasAdjacentStructures(Node node, Player player) {
+        List<Node> adjacent = getAdjacentNodes(node);
+        for (Node adj : adjacent) {
+            if (adj.getStructure() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ---- Accessors ----
+
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    public List<Edge> getEdges() {
+        return edges;
+    }
+
+    public Robber getRobber() {
+        return robber;
+    }
 }

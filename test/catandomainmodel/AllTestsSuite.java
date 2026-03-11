@@ -11,7 +11,8 @@ import org.junit.platform.suite.api.Suite;
                 PlayerAndStructureTest.class,
                 EdgeAndActionTest.class,
                 BoardTest.class,
-                ConfigurationTest.class
+                ConfigurationTest.class,
+                CommandParserTest.class
 })
 public class AllTestsSuite {
 }

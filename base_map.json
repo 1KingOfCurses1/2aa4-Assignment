@@ -1,0 +1,23 @@
+{
+  "tiles": [
+    {"id": 1, "q": 0, "s": 0, "r": 0, "resource": "WOOD", "number": 2},
+    {"id": 2, "q": 1, "s": -1, "r": 0, "resource": "SHEEP", "number": 3},
+    {"id": 3, "q": 1, "s": 0, "r": -1, "resource": "WHEAT", "number": 3},
+    {"id": 4, "q": 0, "s": 1, "r": -1, "resource": "BRICK", "number": 4},
+    {"id": 5, "q": -1, "s": 1, "r": 0, "resource": "ORE", "number": 4},
+    {"id": 6, "q": -1, "s": 0, "r": 1, "resource": "WOOD", "number": 5},
+    {"id": 7, "q": 0, "s": -1, "r": 1, "resource": "WHEAT", "number": 5},
+    {"id": 8, "q": 2, "s": -2, "r": 0, "resource": "SHEEP", "number": 6},
+    {"id": 9, "q": 2, "s": -1, "r": -1, "resource": "BRICK", "number": 6},
+    {"id": 10, "q": 2, "s": 0, "r": -2, "resource": "WHEAT", "number": 8},
+    {"id": 11, "q": 1, "s": 1, "r": -2, "resource": "WOOD", "number": 8},
+    {"id": 12, "q": 0, "s": 2, "r": -2, "resource": "ORE", "number": 9},
+    {"id": 13, "q": -1, "s": 2, "r": -1, "resource": "WOOD", "number": 9},
+    {"id": 14, "q": -2, "s": 2, "r": 0, "resource": "SHEEP", "number": 10},
+    {"id": 15, "q": -2, "s": 1, "r": 1, "resource": "BRICK", "number": 10},
+    {"id": 16, "q": -2, "s": 0, "r": 2, "resource": "SHEEP", "number": 11},
+    {"id": 17, "q": -1, "s": -1, "r": 2, "resource": "ORE", "number": 11},
+    {"id": 18, "q": 0, "s": -2, "r": 2, "resource": "WHEAT", "number": 12},
+    {"id": 19, "q": 1, "s": -2, "r": 1, "resource": "DESERT", "number": 0}
+  ]
+}

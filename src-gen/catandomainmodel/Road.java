@@ -6,41 +6,23 @@ package catandomainmodel;
 
 /************************************************************/
 /**
- * 
+ * A road placed on an edge, owned by a player.
  */
 public class Road {
-	/**
-	 * 
-	 */
-	private Edge edge;
-	/**
-	 * 
-	 */
-	private Player owner;
 
-	/**
-	 * 
-	 * @param owner 
-	 * @param edge 
-	 */
-	public Road(Player owner, Edge edge) {
-		this.owner = owner;
-		this.edge = edge;
-	}
+    private Edge edge;
+    private Player owner;
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public Edge getEdge() {
-		return edge;
-	}
+    public Road(Player owner, Edge edge) {
+        this.owner = owner;
+        this.edge = edge;
+    }
 
-	/**
-	 * 
-	 * @return 
-	 */
-	public Player getOwner() {
-		return owner;
-	}
+    public Edge getEdge() {
+        return edge;
+    }
+
+    public Player getOwner() {
+        return owner;
+    }
 }

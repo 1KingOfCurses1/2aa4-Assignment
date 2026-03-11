@@ -4,199 +4,315 @@
 
 package catandomainmodel;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /************************************************************/
 /**
- * 
+ * The main game controller.
+ * Manages players, agents, the board, and the game loop.
+ * Turn automaton: roll → resolve (robber if 7) → choose action.
  */
 public class Game {
-	/**
-	 * 
-	 */
-	private List<Player> players;
-	/**
-	 * 
-	 */
-	private Board board;
-	/**
-	 * 
-	 */
-	private int currentRound;
-	/**
-	 * 
-	 */
-	private Configuration configuration;
-	/**
-	 * 
-	 */
-	private List<Agent> agents;
-	/**
-	 * 
-	 */
-	private ResourceBank resourceBank;
 
-	/**
-	 * 
-	 * @param board
-	 * @param players
-	 */
-	public Game(Board board, List<Player> players) {
-		this.board = board;
-		this.players = players;
-		this.currentRound = 0;
-		this.configuration = new Configuration();
-		this.resourceBank = new ResourceBank();
-		this.agents = new ArrayList<>();
+    private List<Player> players;
+    private Board board;
+    private int round;
+    private Configuration configuration;
+    private List<IAgent> agents;
+    private ResourceBank resourceBank;
+    private GameStateExporter gameStateExporter;
+    private Random random;
 
-		// Create agents for each player
-		for (Player player : players) {
-			agents.add(new Agent(player));
-		}
-	}
+    public Game(Board board, List<Player> players, List<IAgent> agents) {
+        this.board = board;
+        this.players = new ArrayList<>(players);
+        this.agents = new ArrayList<>(agents);
+        this.round = 0;
+        this.configuration = new Configuration();
+        this.resourceBank = new ResourceBank();
+        this.gameStateExporter = new GameStateExporter();
+        this.random = new Random();
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public int getRound() {
-		return currentRound;
-	}
+    public int getRound() { return round; }
+    public Board getBoard() { return board; }
+    public List<Player> getPlayers() { return players; }
+    public ResourceBank getResourceBank() { return resourceBank; }
+    public Configuration getConfiguration() { return configuration; }
+    public GameStateExporter getGameStateExporter() { return gameStateExporter; }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public void playRound() {
-		currentRound++;
+    /**
+     * Runs the full game until termination.
+     */
+    public void startGame() {
+        System.out.println("=== Catan Simulation Started ===");
+        while (!checkTermination()) {
+            playRound();
+            printRoundSummary();
+            gameStateExporter.writeState(this);
+        }
+        Player winner = getWinner();
+        if (winner != null) {
+            System.out.println("\n=== Game Over! Winner: Player " + winner.getId()
+                    + " with " + winner.getVictoryPoints() + " VP ===");
+        } else {
+            System.out.println("\n=== Game Over! Max rounds reached. No winner. ===");
+        }
+    }
 
-		// Each agent takes a turn, captures the chosen action, and applies it
-		for (Agent agent : agents) {
-			Action action = agent.takeTurn(currentRound, board, resourceBank);
-			System.out.println(action);
-			applyAction(action, agent.getPlayer());
-		}
+    /**
+     * Plays a single round: each agent takes a turn following the automaton.
+     * Roll → resolve robber if 7 → choose action.
+     */
+    public void playRound() {
+        round++;
+        for (int i = 0; i < agents.size(); i++) {
+            IAgent agent = agents.get(i);
+            Player player = players.get(i);
 
-		printRoundSummary();
-	}
+            // If this is a HumanAgent, wait for "go" before the turn
+            if (agent instanceof HumanAgent) {
+                ((HumanAgent) agent).waitForGo();
+            }
 
-	/**
-	 * Applies the effect of an Action to the game state.
-	 * Agent decides *what* to do; Game decides *how* it affects state (SOLID).
-	 * 
-	 * @param action the action chosen by the agent
-	 * @param player the player who performed the action
-	 */
-	private void applyAction(Action action, Player player) {
-		String desc = action.getDescription();
+            // Roll dice
+            int diceRoll = rollDiceForPlayer(player);
+            System.out.println("Player " + player.getId() + " rolled: " + diceRoll);
 
-		if (desc.equals("BUILD_SETTLEMENT")) {
-			player.addVictoryPoints(1);
-		} else if (desc.equals("BUILD_CITY")) {
-			player.addVictoryPoints(2);
-		}
-		// BUILD_ROAD and PASS have no VP effect
-	}
+            // Resolve roll
+            distributeResources(diceRoll);
 
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean checkTermination() {
-		// Check if max rounds reached
-		if (currentRound >= configuration.getMaxRounds()) {
-			return true;
-		}
+            // Robber check
+            if (diceRoll == 7) {
+                resolveRobber(player);
+            }
 
-		// Check if any player has 10 victory points
-		for (Player player : players) {
-			if (player.getVictoryPoints() >= 10) {
-				return true;
-			}
-		}
+            // Agent chooses and returns an action
+            Action action = agent.takeTurn(round, board, resourceBank);
+            System.out.println("  " + action);
 
-		return false;
-	}
+            if (action != null) {
+                applyAction(action, player);
+            }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Player getWinner() {
-		Player winner = null;
-		int maxVP = 0;
+            // Overwrite state.json after each turn/action (per user request)
+            gameStateExporter.writeState(this);
+        }
+    }
 
-		for (Player player : players) {
-			if (player.getVictoryPoints() > maxVP) {
-				maxVP = player.getVictoryPoints();
-				winner = player;
-			}
-		}
+    /**
+     * Executes the parsed Action on the game state (mutating board and player structures).
+     * If the action comes from an AI (missing node IDs), it picks the first valid placement.
+     */
+    private void applyAction(Action action, Player player) {
+        if (action.getActionType() == null) return;
+        
+        switch (action.getActionType()) {
+            case BUILD_SETTLEMENT:
+                try {
+                    String[] parts = action.getDescription().split(" ");
+                    if (parts.length > 1) {
+                        int nodeId = Integer.parseInt(parts[1]);
+                        Node n = board.getNode(nodeId);
+                        if (n != null && board.isValidSettlementPlacement(n, player)) {
+                            Settlement s = new Settlement(player, n);
+                            player.addStructure(s);
+                            System.out.println("    Successfully built Settlement at node " + nodeId);
+                        } else {
+                            System.out.println("    Failed: Invalid settlement placement at node " + nodeId);
+                        }
+                    } else {
+                        for (Node n : board.getNodes()) {
+                            if (board.isValidSettlementPlacement(n, player)) {
+                                Settlement s = new Settlement(player, n);
+                                player.addStructure(s);
+                                System.out.println("    AI successfully built Settlement at node " + n.getId());
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {}
+                break;
+            case BUILD_CITY:
+                try {
+                    String[] parts = action.getDescription().split(" ");
+                    if (parts.length > 1) {
+                        int nodeId = Integer.parseInt(parts[1]);
+                        Node n = board.getNode(nodeId);
+                        if (n != null && board.isValidCityPlacement(n, player)) {
+                            City c = new City(player, n);
+                            player.getStructures().removeIf(st -> st.getLocation() != null && st.getLocation().getId() == nodeId);
+                            player.addStructure(c);
+                            System.out.println("    Successfully built City at node " + nodeId);
+                        } else {
+                            System.out.println("    Failed: Invalid city placement at node " + nodeId);
+                        }
+                    } else {
+                        for (Node n : board.getNodes()) {
+                            if (board.isValidCityPlacement(n, player)) {
+                                City c = new City(player, n);
+                                player.getStructures().removeIf(st -> st.getLocation() != null && st.getLocation().getId() == n.getId());
+                                player.addStructure(c);
+                                System.out.println("    AI successfully built City at node " + n.getId());
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {}
+                break;
+            case BUILD_ROAD:
+                try {
+                    String[] parts = action.getDescription().split(" ");
+                    if (parts.length > 2) {
+                        int fromId = Integer.parseInt(parts[1]);
+                        int toId = Integer.parseInt(parts[2]);
+                        Edge targetEdge = null;
+                        for (Edge e : board.getEdges()) {
+                            if (e.getNodes().size() == 2) {
+                                int id1 = e.getNodes().get(0).getId();
+                                int id2 = e.getNodes().get(1).getId();
+                                if ((id1 == fromId && id2 == toId) || (id1 == toId && id2 == fromId)) {
+                                    targetEdge = e; break;
+                                }
+                            }
+                        }
+                        if (targetEdge != null && board.isValidRoadPlacement(targetEdge, player)) {
+                            Road r = new Road(player, targetEdge);
+                            targetEdge.setRoad(r);
+                            System.out.println("    Successfully built Road from " + fromId + " to " + toId);
+                        } else {
+                            System.out.println("    Failed: Invalid road placement from " + fromId + " to " + toId);
+                        }
+                    } else {
+                        for (Edge e : board.getEdges()) {
+                            if (board.isValidRoadPlacement(e, player)) {
+                                Road r = new Road(player, e);
+                                e.setRoad(r);
+                                System.out.println("    AI successfully built Road on edge " + e.getId());
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {}
+                break;
+            default:
+                break;
+        }
+    }
 
-		return winner;
-	}
+    private int rollDiceForPlayer(Player player) {
+        return (random.nextInt(6) + 1) + (random.nextInt(6) + 1);
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public void startGame() {
-		currentRound = 0;
+    private void distributeResources(int diceRoll) {
+        for (Tile tile : board.getTiles()) {
+            if (tile.getNumber() == diceRoll) {
+                if (board.getRobber().getLocation() != null
+                        && board.getRobber().getLocation().getId() == tile.getId()) {
+                    continue;
+                }
+                for (Node node : board.getNodes()) {
+                    if (node.getStructure() != null) {
+                        Player owner = node.getStructure().getOwner();
+                        int amount = node.getStructure().getVictoryPoints();
+                        if (resourceBank.hasResource(tile.getResourceType(), amount)) {
+                            resourceBank.takeResource(tile.getResourceType(), amount);
+                            owner.getResourceHand().add(tile.getResourceType(), amount);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-		while (!checkTermination()) {
-			playRound();
-		}
+    private void resolveRobber(Player roller) {
+        System.out.println("  *** Robber activated! ***");
 
-		Player winner = getWinner();
-		if (winner != null) {
-			System.out.println("Game Over! Winner: Player " + winner.getId() +
-					" with " + winner.getVictoryPoints() + " victory points");
-		}
-	}
+        for (Player p : players) {
+            if (p.needsToSpendCards()) {
+                int totalCards = p.getResourceHand().getTotalCards();
+                int cardsToLose = totalCards / 2;
+                System.out.println("  Player " + p.getId() + " has " + totalCards
+                        + " cards, must discard " + cardsToLose);
+                discardRandomCards(p, cardsToLose);
+            }
+        }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public void printRoundSummary() {
-		System.out.println("=== Round " + currentRound + " Summary ===");
-		for (Player player : players) {
-			System.out.println("Player " + player.getId() + ": " +
-					player.getVictoryPoints() + " VP");
-		}
-		System.out.println();
-	}
+        List<Tile> tiles = board.getTiles();
+        if (!tiles.isEmpty()) {
+            Tile target = tiles.get(random.nextInt(tiles.size()));
+            board.getRobber().move(target);
+            System.out.println("  Robber moved to tile " + target.getId());
+        }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public ResourceBank getResourceBank() {
-		return resourceBank;
-	}
+        List<Player> stealCandidates = new ArrayList<>();
+        for (Player p : players) {
+            if (p.getId() != roller.getId() && p.getResourceHand().getTotalCards() > 0) {
+                stealCandidates.add(p);
+            }
+        }
+        if (!stealCandidates.isEmpty()) {
+            Player victim = stealCandidates.get(random.nextInt(stealCandidates.size()));
+            ResourceType stolenType = getRandomOwnedResource(victim);
+            if (stolenType != null) {
+                victim.getResourceHand().remove(stolenType, 1);
+                roller.getResourceHand().add(stolenType, 1);
+                System.out.println("  Player " + roller.getId() + " stole 1 "
+                        + stolenType + " from Player " + victim.getId());
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * @param configuration
-	 */
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
+    private void discardRandomCards(Player player, int count) {
+        for (int i = 0; i < count; i++) {
+            ResourceType type = getRandomOwnedResource(player);
+            if (type != null) {
+                player.getResourceHand().remove(type, 1);
+                resourceBank.returnResource(type, 1);
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Board getBoard() {
-		return board;
-	}
+    private ResourceType getRandomOwnedResource(Player player) {
+        List<ResourceType> owned = new ArrayList<>();
+        for (ResourceType type : ResourceType.values()) {
+            if (player.getResourceHand().getAmount(type) > 0) {
+                owned.add(type);
+            }
+        }
+        if (owned.isEmpty()) {
+            return null;
+        }
+        return owned.get(random.nextInt(owned.size()));
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Player> getPlayers() {
-		return players;
-	}
+    public boolean checkTermination() {
+        for (Player p : players) {
+            if (p.getVictoryPoints() >= 10) {
+                return true;
+            }
+        }
+        return round >= configuration.getMaxRounds();
+    }
+
+    public Player getWinner() {
+        Player best = null;
+        for (Player p : players) {
+            if (best == null || p.getVictoryPoints() > best.getVictoryPoints()) {
+                best = p;
+            }
+        }
+        return (best != null && best.getVictoryPoints() >= 10) ? best : null;
+    }
+
+    public void printRoundSummary() {
+        System.out.println("\n--- Round " + round + " Summary ---");
+        for (Player p : players) {
+            System.out.println("  Player " + p.getId()
+                    + ": VP=" + p.getVictoryPoints()
+                    + ", Cards=" + p.getResourceHand().getTotalCards());
+        }
+    }
 }

@@ -4,77 +4,43 @@
 
 package catandomainmodel;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /************************************************************/
 /**
- * 
+ * The shared bank of resources available in the game.
+ * Initialized with 19 of each resource type.
  */
 public class ResourceBank {
-	/**
-	 * 
-	 */
-	private Map<ResourceType, Integer> availableResources;
 
-	/**
-	 * 
-	 */
-	public ResourceBank() {
-		availableResources = new HashMap<>();
-		// Initialize with 19 of each resource type
-		availableResources.put(ResourceType.BRICK, 19);
-		availableResources.put(ResourceType.LUMBER, 19);
-		availableResources.put(ResourceType.WOOL, 19);
-		availableResources.put(ResourceType.GRAIN, 19);
-		availableResources.put(ResourceType.ORE, 19);
-	}
+    private Map<ResourceType, Integer> availableResources;
 
-	/**
-	 * 
-	 * @param type 
-	 * @param amount 
-	 * @return 
-	 */
-	public boolean hasResource(ResourceType type, int amount) {
-		Integer available = availableResources.get(type);
-		return available != null && available >= amount;
-	}
+    public ResourceBank() {
+        availableResources = new EnumMap<>(ResourceType.class);
+        for (ResourceType type : ResourceType.values()) {
+            availableResources.put(type, 19);
+        }
+    }
 
-	/**
-	 * 
-	 * @param type 
-	 * @param amount 
-	 * @return 
-	 */
-	public boolean takeResource(ResourceType type, int amount) {
-		if (hasResource(type, amount)) {
-			availableResources.put(type, availableResources.get(type) - amount);
-			return true;
-		}
-		return false;
-	}
+    public boolean hasResource(ResourceType type, int amount) {
+        return availableResources.getOrDefault(type, 0) >= amount;
+    }
 
-	/**
-	 * 
-	 * @param type 
-	 * @return 
-	 */
-	public int getRemainingCount(ResourceType type) {
-		Integer count = availableResources.get(type);
-		return count != null ? count : 0;
-	}
+    public boolean takeResource(ResourceType type, int amount) {
+        if (!hasResource(type, amount)) {
+            return false;
+        }
+        availableResources.put(type, availableResources.get(type) - amount);
+        return true;
+    }
 
-	/**
-	 * 
-	 * @param type 
-	 * @param amount 
-	 * @return 
-	 */
-	public void returnResource(ResourceType type, int amount) {
-		Integer current = availableResources.get(type);
-		if (current != null) {
-			availableResources.put(type, current + amount);
-		}
-	}
+    public int getRemainingCount(ResourceType type) {
+        return availableResources.getOrDefault(type, 0);
+    }
+
+    public void returnResource(ResourceType type, int amount) {
+        availableResources.put(type,
+                availableResources.getOrDefault(type, 0) + amount);
+    }
 }

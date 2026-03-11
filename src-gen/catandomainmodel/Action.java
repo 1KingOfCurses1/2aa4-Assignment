@@ -6,47 +6,46 @@ package catandomainmodel;
 
 /************************************************************/
 /**
- * 
+ * Represents an action taken during a turn.
  */
 public class Action {
-	/**
-	 * 
-	 */
-	private int roundNumber;
-	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
 
-	/**
-	 * 
-	 * @param roundNumber
-	 * @param playerID
-	 * @param description
-	 */
-	public Action(int roundNumber, int playerID, String description) {
-		this.roundNumber = roundNumber;
-		this.playerID = playerID;
-		this.description = description;
-	}
+    private int roundNumber;
+    private int playerID;
+    private String description;
+    private ActionType actionType;
 
-	/**
-	 * 
-	 * @return the action description (e.g. BUILD_SETTLEMENT, PASS)
-	 */
-	public String getDescription() {
-		return description;
-	}
+    public Action(int roundNumber, int playerID, String description) {
+        this.roundNumber = roundNumber;
+        this.playerID = playerID;
+        this.description = description;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public String toString() {
-		return "[" + roundNumber + "] / [" + playerID + "]: " + description;
-	}
+    public Action(int roundNumber, int playerID, String description, ActionType actionType) {
+        this.roundNumber = roundNumber;
+        this.playerID = playerID;
+        this.description = description;
+        this.actionType = actionType;
+    }
+
+    public int getRoundNumber() {
+        return roundNumber;
+    }
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + roundNumber + "] / [" + playerID + "]: " + description;
+    }
 }

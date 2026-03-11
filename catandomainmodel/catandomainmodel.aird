@@ -11,6 +11,7 @@
   <semanticResources>pathmap://Codegen_PROFILES/Codegen.profile.uml</semanticResources>
   <semanticResources>pathmap://Codegen_PROFILES/languages.notation</semanticResources>
   <semanticResources>pathmap://Codegen_PROFILES/languages.di</semanticResources>
+  <semanticResources>pathmap://PAPYRUS_DOCUMENTATION/Papyrus.profile.uml</semanticResources>
   <ownedViews xmi:type="viewpoint:DView" uid="_Zy7BMPxhEfCGipyYfj5Ccw">
     <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.papyrus.sirius.uml.diagram.activity/description/papyrus_activity.odesign#//@ownedViewpoints[name='ActivityDiagram']"/>
   </ownedViews>

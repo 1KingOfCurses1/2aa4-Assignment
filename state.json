@@ -1,0 +1,10 @@
+{
+  "round": 4,
+  "buildings": [
+    {"node": 1, "owner": "RED", "type": "SETTLEMENT"},
+    {"node": 3, "owner": "BLUE", "type": "SETTLEMENT"}
+  ],
+  "roads": [
+
+  ]
+}

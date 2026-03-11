@@ -7,6 +7,8 @@ package catandomainmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /************************************************************/
 /**
@@ -15,6 +17,7 @@ import java.util.Random;
  * Turn automaton: roll → resolve (robber if 7) → choose action.
  */
 public class Game {
+    private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
     private List<Player> players;
     private Board board;
@@ -36,18 +39,35 @@ public class Game {
         this.random = new Random();
     }
 
-    public int getRound() { return round; }
-    public Board getBoard() { return board; }
-    public List<Player> getPlayers() { return players; }
-    public ResourceBank getResourceBank() { return resourceBank; }
-    public Configuration getConfiguration() { return configuration; }
-    public GameStateExporter getGameStateExporter() { return gameStateExporter; }
+    public int getRound() {
+        return round;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public ResourceBank getResourceBank() {
+        return resourceBank;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public GameStateExporter getGameStateExporter() {
+        return gameStateExporter;
+    }
 
     /**
      * Runs the full game until termination.
      */
     public void startGame() {
-        System.out.println("=== Catan Simulation Started ===");
+        LOGGER.info("=== Catan Simulation Started ===");
         while (!checkTermination()) {
             playRound();
             printRoundSummary();
@@ -55,10 +75,10 @@ public class Game {
         }
         Player winner = getWinner();
         if (winner != null) {
-            System.out.println("\n=== Game Over! Winner: Player " + winner.getId()
-                    + " with " + winner.getVictoryPoints() + " VP ===");
+            LOGGER.log(Level.INFO, "\n=== Game Over! Winner: Player {0} with {1} VP ===",
+                    new Object[] { winner.getId(), winner.getVictoryPoints() });
         } else {
-            System.out.println("\n=== Game Over! Max rounds reached. No winner. ===");
+            LOGGER.info("\n=== Game Over! Max rounds reached. No winner. ===");
         }
     }
 
@@ -73,13 +93,13 @@ public class Game {
             Player player = players.get(i);
 
             // If this is a HumanAgent, wait for "go" before the turn
-            if (agent instanceof HumanAgent) {
-                ((HumanAgent) agent).waitForGo();
+            if (agent instanceof HumanAgent humanAgent) {
+                humanAgent.waitForGo();
             }
 
             // Roll dice
             int diceRoll = rollDiceForPlayer(player);
-            System.out.println("Player " + player.getId() + " rolled: " + diceRoll);
+            LOGGER.log(Level.INFO, "Player {0} rolled: {1}", new Object[] { player.getId(), diceRoll });
 
             // Resolve roll
             distributeResources(diceRoll);
@@ -91,7 +111,7 @@ public class Game {
 
             // Agent chooses and returns an action
             Action action = agent.takeTurn(round, board, resourceBank);
-            System.out.println("  " + action);
+            LOGGER.log(Level.INFO, "  {0}", action);
 
             if (action != null) {
                 applyAction(action, player);
@@ -103,103 +123,130 @@ public class Game {
     }
 
     /**
-     * Executes the parsed Action on the game state (mutating board and player structures).
-     * If the action comes from an AI (missing node IDs), it picks the first valid placement.
+     * Executes the parsed Action on the game state (mutating board and player
+     * structures).
+     * If the action comes from an AI (missing node IDs), it picks the first valid
+     * placement.
      */
     private void applyAction(Action action, Player player) {
-        if (action.getActionType() == null) return;
-        
+        if (action.getActionType() == null)
+            return;
+
         switch (action.getActionType()) {
             case BUILD_SETTLEMENT:
-                try {
-                    String[] parts = action.getDescription().split(" ");
-                    if (parts.length > 1) {
-                        int nodeId = Integer.parseInt(parts[1]);
-                        Node n = board.getNode(nodeId);
-                        if (n != null && board.isValidSettlementPlacement(n, player)) {
-                            Settlement s = new Settlement(player, n);
-                            player.addStructure(s);
-                            System.out.println("    Successfully built Settlement at node " + nodeId);
-                        } else {
-                            System.out.println("    Failed: Invalid settlement placement at node " + nodeId);
-                        }
-                    } else {
-                        for (Node n : board.getNodes()) {
-                            if (board.isValidSettlementPlacement(n, player)) {
-                                Settlement s = new Settlement(player, n);
-                                player.addStructure(s);
-                                System.out.println("    AI successfully built Settlement at node " + n.getId());
-                                break;
-                            }
-                        }
-                    }
-                } catch (Exception e) {}
+                handleBuildSettlement(action, player);
                 break;
             case BUILD_CITY:
-                try {
-                    String[] parts = action.getDescription().split(" ");
-                    if (parts.length > 1) {
-                        int nodeId = Integer.parseInt(parts[1]);
-                        Node n = board.getNode(nodeId);
-                        if (n != null && board.isValidCityPlacement(n, player)) {
-                            City c = new City(player, n);
-                            player.getStructures().removeIf(st -> st.getLocation() != null && st.getLocation().getId() == nodeId);
-                            player.addStructure(c);
-                            System.out.println("    Successfully built City at node " + nodeId);
-                        } else {
-                            System.out.println("    Failed: Invalid city placement at node " + nodeId);
-                        }
-                    } else {
-                        for (Node n : board.getNodes()) {
-                            if (board.isValidCityPlacement(n, player)) {
-                                City c = new City(player, n);
-                                player.getStructures().removeIf(st -> st.getLocation() != null && st.getLocation().getId() == n.getId());
-                                player.addStructure(c);
-                                System.out.println("    AI successfully built City at node " + n.getId());
-                                break;
-                            }
-                        }
-                    }
-                } catch (Exception e) {}
+                handleBuildCity(action, player);
                 break;
             case BUILD_ROAD:
-                try {
-                    String[] parts = action.getDescription().split(" ");
-                    if (parts.length > 2) {
-                        int fromId = Integer.parseInt(parts[1]);
-                        int toId = Integer.parseInt(parts[2]);
-                        Edge targetEdge = null;
-                        for (Edge e : board.getEdges()) {
-                            if (e.getNodes().size() == 2) {
-                                int id1 = e.getNodes().get(0).getId();
-                                int id2 = e.getNodes().get(1).getId();
-                                if ((id1 == fromId && id2 == toId) || (id1 == toId && id2 == fromId)) {
-                                    targetEdge = e; break;
-                                }
-                            }
-                        }
-                        if (targetEdge != null && board.isValidRoadPlacement(targetEdge, player)) {
-                            Road r = new Road(player, targetEdge);
-                            targetEdge.setRoad(r);
-                            System.out.println("    Successfully built Road from " + fromId + " to " + toId);
-                        } else {
-                            System.out.println("    Failed: Invalid road placement from " + fromId + " to " + toId);
-                        }
-                    } else {
-                        for (Edge e : board.getEdges()) {
-                            if (board.isValidRoadPlacement(e, player)) {
-                                Road r = new Road(player, e);
-                                e.setRoad(r);
-                                System.out.println("    AI successfully built Road on edge " + e.getId());
-                                break;
-                            }
-                        }
-                    }
-                } catch (Exception e) {}
+                handleBuildRoad(action, player);
                 break;
             default:
                 break;
         }
+    }
+
+    private void handleBuildSettlement(Action action, Player player) {
+        try {
+            String[] parts = action.getDescription().split(" ");
+            if (parts.length > 1) {
+                int nodeId = Integer.parseInt(parts[1]);
+                Node n = board.getNode(nodeId);
+                if (n != null && board.isValidSettlementPlacement(n, player)) {
+                    Settlement s = new Settlement(player, n);
+                    player.addStructure(s);
+                    LOGGER.log(Level.INFO, "    Successfully built Settlement at node {0}", nodeId);
+                } else {
+                    LOGGER.log(Level.INFO, "    Failed: Invalid settlement placement at node {0}", nodeId);
+                }
+            } else {
+                for (Node n : board.getNodes()) {
+                    if (board.isValidSettlementPlacement(n, player)) {
+                        Settlement s = new Settlement(player, n);
+                        player.addStructure(s);
+                        LOGGER.log(Level.INFO, "    AI successfully built Settlement at node {0}", n.getId());
+                        break;
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.SEVERE, "Failed to parse node ID for settlement", e);
+        }
+    }
+
+    private void handleBuildCity(Action action, Player player) {
+        try {
+            String[] parts = action.getDescription().split(" ");
+            if (parts.length > 1) {
+                int nodeId = Integer.parseInt(parts[1]);
+                Node n = board.getNode(nodeId);
+                if (n != null && board.isValidCityPlacement(n, player)) {
+                    City c = new City(player, n);
+                    player.getStructures()
+                            .removeIf(st -> st.getLocation() != null && st.getLocation().getId() == nodeId);
+                    player.addStructure(c);
+                    LOGGER.log(Level.INFO, "    Successfully built City at node {0}", nodeId);
+                } else {
+                    LOGGER.log(Level.INFO, "    Failed: Invalid city placement at node {0}", nodeId);
+                }
+            } else {
+                for (Node n : board.getNodes()) {
+                    if (board.isValidCityPlacement(n, player)) {
+                        City c = new City(player, n);
+                        player.getStructures()
+                                .removeIf(st -> st.getLocation() != null && st.getLocation().getId() == n.getId());
+                        player.addStructure(c);
+                        LOGGER.log(Level.INFO, "    AI successfully built City at node {0}", n.getId());
+                        break;
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.SEVERE, "Failed to parse node ID for city", e);
+        }
+    }
+
+    private void handleBuildRoad(Action action, Player player) {
+        try {
+            String[] parts = action.getDescription().split(" ");
+            if (parts.length > 2) {
+                int fromId = Integer.parseInt(parts[1]);
+                int toId = Integer.parseInt(parts[2]);
+                Edge targetEdge = findEdge(fromId, toId);
+                if (targetEdge != null && board.isValidRoadPlacement(targetEdge, player)) {
+                    Road r = new Road(player, targetEdge);
+                    targetEdge.setRoad(r);
+                    LOGGER.info(() -> String.format("    Successfully built Road from %d to %d", fromId, toId));
+                } else {
+                    LOGGER.info(() -> String.format("    Failed: Invalid road placement from %d to %d", fromId, toId));
+                }
+            } else {
+                for (Edge e : board.getEdges()) {
+                    if (board.isValidRoadPlacement(e, player)) {
+                        Road r = new Road(player, e);
+                        e.setRoad(r);
+                        LOGGER.log(Level.INFO, "    AI successfully built Road on edge {0}", e.getId());
+                        break;
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.SEVERE, "Failed to parse node IDs for road", e);
+        }
+    }
+
+    private Edge findEdge(int fromId, int toId) {
+        for (Edge e : board.getEdges()) {
+            if (e.getNodes().size() == 2) {
+                int id1 = e.getNodes().get(0).getId();
+                int id2 = e.getNodes().get(1).getId();
+                if ((id1 == fromId && id2 == toId) || (id1 == toId && id2 == fromId)) {
+                    return e;
+                }
+            }
+        }
+        return null;
     }
 
     private int rollDiceForPlayer(Player player) {
@@ -228,14 +275,14 @@ public class Game {
     }
 
     private void resolveRobber(Player roller) {
-        System.out.println("  *** Robber activated! ***");
+        LOGGER.info("  *** Robber activated! ***");
 
         for (Player p : players) {
             if (p.needsToSpendCards()) {
                 int totalCards = p.getResourceHand().getTotalCards();
                 int cardsToLose = totalCards / 2;
-                System.out.println("  Player " + p.getId() + " has " + totalCards
-                        + " cards, must discard " + cardsToLose);
+                LOGGER.log(Level.INFO, "  Player {0} has {1} cards, must discard {2}",
+                        new Object[] { p.getId(), totalCards, cardsToLose });
                 discardRandomCards(p, cardsToLose);
             }
         }
@@ -244,7 +291,7 @@ public class Game {
         if (!tiles.isEmpty()) {
             Tile target = tiles.get(random.nextInt(tiles.size()));
             board.getRobber().move(target);
-            System.out.println("  Robber moved to tile " + target.getId());
+            LOGGER.log(Level.INFO, "  Robber moved to tile {0}", target.getId());
         }
 
         List<Player> stealCandidates = new ArrayList<>();
@@ -259,8 +306,8 @@ public class Game {
             if (stolenType != null) {
                 victim.getResourceHand().remove(stolenType, 1);
                 roller.getResourceHand().add(stolenType, 1);
-                System.out.println("  Player " + roller.getId() + " stole 1 "
-                        + stolenType + " from Player " + victim.getId());
+                LOGGER.log(Level.INFO, "  Player {0} stole 1 {1} from Player {2}",
+                        new Object[] { roller.getId(), stolenType, victim.getId() });
             }
         }
     }
@@ -308,11 +355,10 @@ public class Game {
     }
 
     public void printRoundSummary() {
-        System.out.println("\n--- Round " + round + " Summary ---");
+        LOGGER.log(Level.INFO, "\n--- Round {0} Summary ---", round);
         for (Player p : players) {
-            System.out.println("  Player " + p.getId()
-                    + ": VP=" + p.getVictoryPoints()
-                    + ", Cards=" + p.getResourceHand().getTotalCards());
+            LOGGER.log(Level.INFO, "  Player {0}: VP={1}, Cards={2}",
+                    new Object[] { p.getId(), p.getVictoryPoints(), p.getResourceHand().getTotalCards() });
         }
     }
 }

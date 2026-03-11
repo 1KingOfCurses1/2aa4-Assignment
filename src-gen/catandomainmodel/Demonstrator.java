@@ -7,6 +7,8 @@ package catandomainmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /************************************************************/
 /**
@@ -15,11 +17,12 @@ import java.io.File;
  * runs the game loop, and exports state for visualization.
  */
 public class Demonstrator {
+    private static final Logger LOGGER = Logger.getLogger(Demonstrator.class.getName());
 
     public static void main(String[] args) {
-        System.out.println("===================================");
-        System.out.println("   Catan Simulator - Assignment 2  ");
-        System.out.println("===================================\n");
+        LOGGER.info("===================================");
+        LOGGER.info("   Catan Simulator - Assignment 2  ");
+        LOGGER.info("===================================\n");
 
         // --- Build the board ---
         List<Tile> tiles = createTiles();
@@ -36,55 +39,58 @@ public class Demonstrator {
 
         // --- Create agents: 3 AI + 1 Human ---
         List<IAgent> agents = new ArrayList<>();
-        agents.add(new Agent(p1));        // AI
-        agents.add(new Agent(p2));        // AI
-        agents.add(new Agent(p3));        // AI
-        agents.add(new HumanAgent(p4));   // Human (Player 4)
+        agents.add(new Agent(p1)); // AI
+        agents.add(new Agent(p2)); // AI
+        agents.add(new Agent(p3)); // AI
+        agents.add(new HumanAgent(p4)); // Human (Player 4)
 
         // --- Create and start the game ---
         Game game = new Game(board, players, agents);
-        System.out.println("Game created with " + players.size() + " players.");
-        System.out.println("Player 4 is the human player.\n");
+        LOGGER.log(Level.INFO, "Game created with {0} players.", players.size());
+        LOGGER.info("Player 4 is the human player.\n");
 
         // Write the base map once before starting the game
         game.getGameStateExporter().writeBaseMap(board);
 
         // Run the simulation
         game.startGame();
-        
+
         // Write the final state
         game.getGameStateExporter().writeState(game);
 
-        System.out.println("\nGame simulation concluded.");
-        System.out.println("Base map and State exported to: base_map.json and state.json");
-        
+        LOGGER.info("\nGame simulation concluded.");
+        LOGGER.info("Base map and State exported to: base_map.json and state.json");
+
         // Try launching the python visualizer
         launchVisualizer();
-        
-        System.out.println("Done.");
+
+        LOGGER.info("Done.");
     }
-    
+
     private static void launchVisualizer() {
-        System.out.println("Attempting to launch Python Visualizer...");
+        LOGGER.info("Attempting to launch Python Visualizer...");
         try {
-            // Find the visualizer script path. We know it's in the adjacent 2026-base folder.
+            // Find the visualizer script path. We know it's in the adjacent 2026-base
+            // folder.
             File visFile = new File("../2aa4-2026-base/assignments/visualize/light_visualizer.py");
             if (!visFile.exists()) {
-                System.out.println("Could not locate visualizer script at: " + visFile.getAbsolutePath());
+                LOGGER.log(Level.INFO, "Could not locate visualizer script at: {0}", visFile.getAbsolutePath());
                 return;
             }
-            
+
             ProcessBuilder pb = new ProcessBuilder(
-                "python", 
-                visFile.getAbsolutePath(),
-                "base_map.json",
-                "state.json"
-            );
+                    "python",
+                    visFile.getAbsolutePath(),
+                    "base_map.json",
+                    "state.json");
             pb.inheritIO(); // Pipe python output to java console
             Process process = pb.start();
             process.waitFor();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, "Visualizer process was interrupted", e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            System.err.println("Failed to launch visualizer: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to launch visualizer", e);
         }
     }
 
@@ -96,15 +102,15 @@ public class Demonstrator {
     private static List<Tile> createTiles() {
         List<Tile> tiles = new ArrayList<>();
         ResourceType[] types = {
-            ResourceType.LUMBER, ResourceType.WOOL, ResourceType.GRAIN,
-            ResourceType.BRICK, ResourceType.ORE,
-            ResourceType.LUMBER, ResourceType.GRAIN, ResourceType.WOOL,
-            ResourceType.BRICK, ResourceType.GRAIN,
-            ResourceType.LUMBER, ResourceType.ORE, ResourceType.LUMBER,
-            ResourceType.WOOL, ResourceType.BRICK, ResourceType.WOOL,
-            ResourceType.ORE, ResourceType.GRAIN, ResourceType.WOOL
+                ResourceType.LUMBER, ResourceType.WOOL, ResourceType.GRAIN,
+                ResourceType.BRICK, ResourceType.ORE,
+                ResourceType.LUMBER, ResourceType.GRAIN, ResourceType.WOOL,
+                ResourceType.BRICK, ResourceType.GRAIN,
+                ResourceType.LUMBER, ResourceType.ORE, ResourceType.LUMBER,
+                ResourceType.WOOL, ResourceType.BRICK, ResourceType.WOOL,
+                ResourceType.ORE, ResourceType.GRAIN, ResourceType.WOOL
         };
-        int[] numbers = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12, 0};
+        int[] numbers = { 2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12, 0 };
 
         for (int i = 0; i < types.length; i++) {
             tiles.add(new Tile(i + 1, types[i], numbers[i]));
@@ -131,19 +137,19 @@ public class Demonstrator {
         List<Edge> edges = new ArrayList<>();
         // Create edges connecting sequential node pairs (simplified topology)
         int[][] connections = {
-            {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,7},
-            {7,8}, {8,9}, {9,10}, {10,11}, {11,12}, {12,13},
-            {13,14}, {14,15}, {15,16}, {16,17}, {17,18},
-            {1,9}, {2,10}, {3,11}, {4,12}, {5,13}, {6,14},
-            {8,17}, {9,18}, {10,19}, {11,20}, {12,21}, {13,22},
-            {15,24}, {16,25}, {17,26}, {18,27}, {19,28}, {20,29},
-            {22,31}, {23,32}, {24,33}, {25,34}, {26,35}, {27,36},
-            {28,37}, {29,38}, {30,39}, {31,40}, {32,41}, {33,42},
-            {34,43}, {35,44}, {36,45}, {37,46}, {38,47}, {39,48},
-            {40,49}, {41,50}, {42,51}, {43,52}, {44,53}, {45,54},
-            {46,47}, {47,48}, {48,49}, {49,50}, {50,51}, {51,52},
-            {52,53}, {53,54},
-            {7,18}, {14,23}, {21,30}, {19,8}, {20,9}
+                { 1, 2 }, { 2, 3 }, { 3, 4 }, { 4, 5 }, { 5, 6 }, { 6, 7 },
+                { 7, 8 }, { 8, 9 }, { 9, 10 }, { 10, 11 }, { 11, 12 }, { 12, 13 },
+                { 13, 14 }, { 14, 15 }, { 15, 16 }, { 16, 17 }, { 17, 18 },
+                { 1, 9 }, { 2, 10 }, { 3, 11 }, { 4, 12 }, { 5, 13 }, { 6, 14 },
+                { 8, 17 }, { 9, 18 }, { 10, 19 }, { 11, 20 }, { 12, 21 }, { 13, 22 },
+                { 15, 24 }, { 16, 25 }, { 17, 26 }, { 18, 27 }, { 19, 28 }, { 20, 29 },
+                { 22, 31 }, { 23, 32 }, { 24, 33 }, { 25, 34 }, { 26, 35 }, { 27, 36 },
+                { 28, 37 }, { 29, 38 }, { 30, 39 }, { 31, 40 }, { 32, 41 }, { 33, 42 },
+                { 34, 43 }, { 35, 44 }, { 36, 45 }, { 37, 46 }, { 38, 47 }, { 39, 48 },
+                { 40, 49 }, { 41, 50 }, { 42, 51 }, { 43, 52 }, { 44, 53 }, { 45, 54 },
+                { 46, 47 }, { 47, 48 }, { 48, 49 }, { 49, 50 }, { 50, 51 }, { 51, 52 },
+                { 52, 53 }, { 53, 54 },
+                { 7, 18 }, { 14, 23 }, { 21, 30 }, { 19, 8 }, { 20, 9 }
         };
 
         for (int i = 0; i < connections.length; i++) {
@@ -151,13 +157,18 @@ public class Demonstrator {
             int fromId = connections[i][0];
             int toId = connections[i][1];
             // Find nodes by ID
-            Node from = null, to = null;
+            Node from = null;
+            Node to = null;
             for (Node n : nodes) {
-                if (n.getId() == fromId) from = n;
-                if (n.getId() == toId) to = n;
+                if (n.getId() == fromId)
+                    from = n;
+                if (n.getId() == toId)
+                    to = n;
             }
-            if (from != null) e.addNode(from);
-            if (to != null) e.addNode(to);
+            if (from != null)
+                e.addNode(from);
+            if (to != null)
+                e.addNode(to);
             edges.add(e);
         }
         return edges;

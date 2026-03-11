@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-public class EdgeAndActionTest {
+class EdgeAndActionTest {
 
     private static final int DEFAULT_TIMEOUT_MS = 2000;
 

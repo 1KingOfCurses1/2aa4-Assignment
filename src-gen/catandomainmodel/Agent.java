@@ -51,7 +51,7 @@ public class Agent implements IAgent {
      */
     @Override
     public Action takeTurn(int roundNumber, Board board, ResourceBank resourceBank) {
-        int roll = rollDice();
+        rollDice();
 
         // Build available actions
         List<Action> actions = new ArrayList<>();

@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-public class PlayerAndStructureTest {
+class PlayerAndStructureTest {
 
     private static final int DEFAULT_TIMEOUT_MS = 2000;
 

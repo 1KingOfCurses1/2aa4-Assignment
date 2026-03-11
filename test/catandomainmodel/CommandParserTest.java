@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CommandParserTest {
+class CommandParserTest {
 
     private CommandParser parser;
 
@@ -19,7 +19,7 @@ public class CommandParserTest {
         Action a = parser.parse("roll");
         assertNotNull(a, "Should parse roll");
         assertEquals(ActionType.ROLL, a.getActionType());
-        
+
         // Case insensitive
         a = parser.parse("RoLl");
         assertNotNull(a);
@@ -83,7 +83,8 @@ public class CommandParserTest {
 
     @Test
     void testGoIsHandledCorrectlyAsNotGameplayAction() {
-        // "go" is NOT a gameplay action, so the parser (which returns Actions) should return null.
+        // "go" is NOT a gameplay action, so the parser (which returns Actions) should
+        // return null.
         // The HumanAgent handles "go" internally as step-forward control.
         assertNull(parser.parse("go"), "'go' should not be parsed as a normal action");
     }

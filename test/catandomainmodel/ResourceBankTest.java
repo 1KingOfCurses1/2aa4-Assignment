@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-public class ResourceBankTest {
+class ResourceBankTest {
 
     private static final int DEFAULT_TIMEOUT_MS = 2000;
 

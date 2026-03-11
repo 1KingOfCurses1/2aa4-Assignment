@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.io.TempDir;
 
-public class ConfigurationTest {
+class ConfigurationTest {
 
     private static final int DEFAULT_TIMEOUT_MS = 2000;
 

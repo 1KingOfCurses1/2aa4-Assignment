@@ -8,28 +8,18 @@ package catandomainmodel;
 /**
  * 
  */
-public class Action {
+public class CommandParser {
 	/**
 	 * 
 	 */
-	private int roundNumber;
-	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
-	/**
-	 * 
-	 */
-	public ActionType actiontype;
+	public void parse(input: String):
+
+	Action() {
+	}
 
 	/**
 	 * 
-	 * @return 
 	 */
-	public String toString() {
+	public void isValid(input: String): boolean() {
 	}
 }

@@ -8,28 +8,25 @@ package catandomainmodel;
 /**
  * 
  */
-public class Action {
+public class TradeOffer {
 	/**
 	 * 
 	 */
-	private int roundNumber;
+	private ResourceHand offeredResources;
 	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
-	/**
-	 * 
-	 */
-	public ActionType actiontype;
+				 * 
+				 */
+				private ResourceHand requestedResources;
 
 	/**
 	 * 
-	 * @return 
 	 */
-	public String toString() {
+	public void accept(): void() {
+	}
+
+	/**
+	 * 
+	 */
+	public void reject(): void() {
 	}
 }

@@ -4,32 +4,11 @@
 
 package catandomainmodel;
 
+
+
 /************************************************************/
 /**
  * 
  */
-public class Action {
-	/**
-	 * 
-	 */
-	private int roundNumber;
-	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
-	/**
-	 * 
-	 */
-	public ActionType actiontype;
-
-	/**
-	 * 
-	 * @return 
-	 */
-	public String toString() {
-	}
+public class int {
 }

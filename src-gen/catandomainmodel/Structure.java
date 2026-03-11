@@ -20,33 +20,30 @@ public abstract class Structure {
 
 	/**
 	 * 
-	 * @param owner 
-	 * @param location 
-	 */
-	public Structure(Player owner, Node location) {
-		this.owner = owner;
-		this.location = location;
-	}
-
-	/**
-	 * 
 	 * @return 
 	 */
 	public Player getOwner() {
-		return owner;
 	}
 
 	/**
 	 * 
 	 * @return 
 	 */
-	public abstract int getVictoryPoints();
+	public int getVictoryPoints() {
+	}
 
 	/**
 	 * 
 	 * @return 
 	 */
 	public Node getLocation() {
-		return location;
+	}
+
+	/**
+	 * 
+	 * @param owner 
+	 * @param location 
+	 */
+	public void structure(Player owner, Node location) {
 	}
 }

@@ -12,7 +12,7 @@ public class Node {
 	/**
 	 * 
 	 */
-	private Structure structure;
+	public Structure structure;
 	/**
 	 * 
 	 */
@@ -22,9 +22,7 @@ public class Node {
 	 * 
 	 * @param id 
 	 */
-	public Node(int id) {
-		this.id = id;
-		this.structure = null;
+	public void Node(int id) {
 	}
 
 	/**
@@ -32,30 +30,5 @@ public class Node {
 	 * @return 
 	 */
 	public int getId() {
-		return id;
-	}
-
-	/**
-	 * 
-	 * @return 
-	 */
-	public Structure getStructure() {
-		return structure;
-	}
-
-	/**
-	 * 
-	 * @param structure 
-	 */
-	public void setStructure(Structure structure) {
-		this.structure = structure;
-	}
-
-	/**
-	 * 
-	 * @return 
-	 */
-	public boolean hasStructure() {
-		return structure != null;
 	}
 }

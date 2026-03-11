@@ -4,203 +4,117 @@
 
 package catandomainmodel;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
 /************************************************************/
 /**
- *
+ * 
  */
 public class Game {
-
-	private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
-	private static final int VICTORY_POINTS_TO_WIN = 10;
-
 	/**
-	 *
+	 * 
 	 */
-	private List<Player> players;
+	public Player[] player;
 	/**
-	 *
+	 * 
 	 */
 	private Board board;
 	/**
-	 *
+	 * 
+	 */
+	private int round;
+	/**
+	 * 
+	 */
+	private int targetVictoryPoints;
+	/**
+	 * 
 	 */
 	private int currentRound;
 	/**
-	 *
+	 * 
 	 */
-	private Configuration configuration;
+	private int maxRounds;
 	/**
-	 *
+	 * 
 	 */
-	private List<Agent> agents;
+	private boolean isGameOver;
 	/**
-	 *
+	 * 
 	 */
-	private ResourceBank resourceBank;
+	public Configuration configuration;
+	/**
+	 * 
+	 */
+	public IAgent[] agent;
+	/**
+	 * 
+	 */
+	public ResourceBank resourcebank;
+	/**
+	 * 
+	 */
+	public GameStateExporter gamestateexporter;
 
 	/**
 	 * 
-	 * @param board
-	 * @param players
+	 * @param board 
+	 * @param players 
 	 */
-	public Game(Board board, List<Player> players) {
-		this.board = board;
-		this.players = players;
-		this.currentRound = 0;
-		this.configuration = new Configuration();
-		this.resourceBank = new ResourceBank();
-		this.agents = new ArrayList<>();
-
-		// Create agents for each player
-		for (Player player : players) {
-			agents.add(new Agent(player));
-		}
+	public void Game(Board board, List players) {
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public int getRound() {
-		return currentRound;
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public void playRound() {
-		currentRound++;
-
-		// Each agent takes a turn, captures the chosen action, and applies it
-		for (Agent agent : agents) {
-			Action action = agent.takeTurn(currentRound, board, resourceBank);
-			LOGGER.info(action.toString());
-			applyAction(action, agent.getPlayer());
-		}
-
-		printRoundSummary();
-	}
-
-	/**
-	 * Applies the effect of an Action to the game state.
-	 * Agent decides *what* to do; Game decides *how* it affects state (SOLID).
-	 * 
-	 * @param action the action chosen by the agent
-	 * @param player the player who performed the action
-	 */
-	private void applyAction(Action action, Player player) {
-		String desc = action.getDescription();
-
-		if (desc.equals(Action.BUILD_SETTLEMENT)) {
-			player.addVictoryPoints(1);
-		} else if (desc.equals(Action.BUILD_CITY)) {
-			player.addVictoryPoints(2);
-		}
-		// BUILD_ROAD and PASS have no VP effect
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public boolean checkTermination() {
-		// Check if max rounds reached
-		if (currentRound >= configuration.getMaxRounds()) {
-			return true;
-		}
-
-		// Check if any player has enough victory points to win
-		for (Player player : players) {
-			if (player.getVictoryPoints() >= VICTORY_POINTS_TO_WIN) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public Player getWinner() {
-		Player winner = null;
-		int maxVP = 0;
-
-		for (Player player : players) {
-			if (player.getVictoryPoints() > maxVP) {
-				maxVP = player.getVictoryPoints();
-				winner = player;
-			}
-		}
-
-		return winner;
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public void startGame() {
-		currentRound = 0;
-
-		while (!checkTermination()) {
-			playRound();
-		}
-
-		Player winner = getWinner();
-		if (winner != null) {
-			LOGGER.info("Game Over! Winner: Player " + winner.getId() +
-					" with " + winner.getVictoryPoints() + " victory points");
-		}
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
+	 */
+	public void playRound() {
+	}
+
+	/**
+	 * 
+	 * @return 
 	 */
 	public void printRoundSummary() {
-		LOGGER.info("=== Round " + currentRound + " Summary ===");
-		for (Player player : players) {
-			LOGGER.info("Player " + player.getId() + ": " +
-					player.getVictoryPoints() + " VP");
-		}
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public ResourceBank getResourceBank() {
-		return resourceBank;
-	}
-
-	/**
-	 * 
-	 * @param configuration
-	 */
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Board getBoard() {
-		return board;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Player> getPlayers() {
-		return players;
 	}
 }

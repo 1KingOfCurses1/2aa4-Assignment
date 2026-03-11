@@ -4,91 +4,44 @@
 
 package catandomainmodel;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
-
 /************************************************************/
 /**
  * 
  */
-public class Agent {
+public class Agent implements IAgent {
 	/**
 	 * 
 	 */
 	private Player player;
-	/**
-	 * 
-	 */
-	private Random random;
 
 	/**
 	 * 
-	 * @param player
+	 * @return 
 	 */
-	public Agent(Player player) {
-		this.player = player;
-		this.random = new Random();
-	}
-
-	/**
-	 * Builds a list of all candidate actions, performs a linear scan
-	 * to check which are valid, and randomly picks one (R1.8).
-	 * 
-	 * @param roundNumber  the current round number
-	 * @param board        the game board
-	 * @param resourceBank the shared resource bank
-	 * @return the chosen Action
-	 */
-	public Action takeTurn(int roundNumber, Board board, ResourceBank resourceBank) {
-		List<Action> validActions = new ArrayList<>();
-
-		// --- Linear scan of all possible actions ---
-
-		// 1. BUILD_SETTLEMENT: always available in this simplified simulator
-		validActions.add(new Action(roundNumber, player.getId(), Action.BUILD_SETTLEMENT));
-
-		// 2. BUILD_CITY: only valid if the player already owns at least one settlement
-		if (!player.getStructures().isEmpty()) {
-			validActions.add(new Action(roundNumber, player.getId(), Action.BUILD_CITY));
-		}
-
-		// 3. BUILD_ROAD: always available in this simplified simulator
-		validActions.add(new Action(roundNumber, player.getId(), Action.BUILD_ROAD));
-
-		// 4. PASS: always available as a fallback
-		validActions.add(new Action(roundNumber, player.getId(), Action.PASS));
-
-		// --- Randomly pick one valid action ---
-		return chooseRandomAction(validActions);
+	public Action makeDecision() {
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public int rollDice() {
-		return (random.nextInt(6) + 1) + (random.nextInt(6) + 1);
-	}
-
-	/**
-	 * Selects a random action from the given list (R1.8).
-	 * 
-	 * @param availableActions list of valid actions
-	 * @return a randomly chosen Action, or null if list is empty
-	 */
-	public Action chooseRandomAction(List<Action> availableActions) {
-		if (availableActions == null || availableActions.isEmpty()) {
-			return null;
-		}
-		return availableActions.get(random.nextInt(availableActions.size()));
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @param availableActions 
+	 * @return 
 	 */
-	public Player getPlayer() {
-		return player;
+	public Action chooseRandomAction(List availableActions) {
+	}
+
+	/**
+	 * 
+	 * @param board 
+	 * @param resourceBank 
+	 * @return 
+	 */
+	public void takeTurn(Board board, ResourceBank resourceBank) {
 	}
 }

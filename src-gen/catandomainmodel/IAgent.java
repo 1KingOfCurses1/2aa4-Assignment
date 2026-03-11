@@ -8,28 +8,9 @@ package catandomainmodel;
 /**
  * 
  */
-public class Action {
+public interface IAgent {
 	/**
-	 * 
-	 */
-	private int roundNumber;
-	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
-	/**
-	 * 
-	 */
-	public ActionType actiontype;
-
-	/**
-	 * 
-	 * @return 
-	 */
-	public String toString() {
-	}
+				 * 
+				 */
+				public undef takeTurn(roundNumber: int, board: Board, resourceBank: ResourceBank): Action;
 }

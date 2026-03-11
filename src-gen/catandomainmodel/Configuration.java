@@ -4,60 +4,28 @@
 
 package catandomainmodel;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.logging.Logger;
-
 /************************************************************/
 /**
- *
+ * 
  */
 public class Configuration {
-
-	private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
-	private static final int DEFAULT_MAX_ROUNDS = 500;
-
 	/**
-	 *
+	 * 
 	 */
 	private int maxRounds;
 
 	/**
-	 *
-	 */
-	public Configuration() {
-		this.maxRounds = DEFAULT_MAX_ROUNDS;
-	}
-
-	/**
 	 * 
-	 * @param filePath
-	 * @return
+	 * @return 
+	 * @param filePath 
 	 */
 	public void loadFromFile(String filePath) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("turns:")) {
-					String[] parts = line.split(":");
-					if (parts.length == 2) {
-						this.maxRounds = Integer.parseInt(parts[1].trim());
-					}
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.warning("Error reading configuration file: " + e.getMessage());
-		} catch (NumberFormatException e) {
-			LOGGER.warning("Error parsing maxRounds value: " + e.getMessage());
-		}
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public int getMaxRounds() {
-		return maxRounds;
 	}
 }

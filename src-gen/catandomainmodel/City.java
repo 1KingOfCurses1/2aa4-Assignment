@@ -12,18 +12,14 @@ public class City extends Structure {
 	/**
 	 * 
 	 * @param owner 
-	 * @param location 
 	 */
-	public City(Player owner, Node location) {
-		super(owner, location);
+	public void City(Player owner) {
 	}
 
 	/**
 	 * 
 	 * @return 
 	 */
-	@Override
-	public int getVictoryPoints() {
-		return 2;
+	public int victoryPoints() {
 	}
 }

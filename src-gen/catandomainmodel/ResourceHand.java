@@ -4,9 +4,6 @@
 
 package catandomainmodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /************************************************************/
 /**
  * 
@@ -15,19 +12,12 @@ public class ResourceHand {
 	/**
 	 * 
 	 */
-	private Map<ResourceType, Integer> resources;
+	private EMap resources;
 
 	/**
 	 * 
 	 */
-	public ResourceHand() {
-		resources = new HashMap<>();
-		// Initialize with 0 of each resource type
-		resources.put(ResourceType.BRICK, 0);
-		resources.put(ResourceType.LUMBER, 0);
-		resources.put(ResourceType.WOOL, 0);
-		resources.put(ResourceType.GRAIN, 0);
-		resources.put(ResourceType.ORE, 0);
+	public void ResourceHand() {
 	}
 
 	/**
@@ -35,7 +25,6 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int getBrick() {
-		return resources.get(ResourceType.BRICK);
 	}
 
 	/**
@@ -43,7 +32,6 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int getLumber() {
-		return resources.get(ResourceType.LUMBER);
 	}
 
 	/**
@@ -51,7 +39,6 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int getWool() {
-		return resources.get(ResourceType.WOOL);
 	}
 
 	/**
@@ -59,7 +46,6 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int getGrain() {
-		return resources.get(ResourceType.GRAIN);
 	}
 
 	/**
@@ -67,19 +53,13 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int getOre() {
-		return resources.get(ResourceType.ORE);
 	}
 
 	/**
 	 * 
 	 * @return 
 	 */
-	public int getTotalCards() {
-		int total = 0;
-		for (Integer count : resources.values()) {
-			total += count;
-		}
-		return total;
+	public int totalCards() {
 	}
 
 	/**
@@ -89,20 +69,6 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public void add(ResourceType type, int amount) {
-		Integer current = resources.get(type);
-		if (current != null) {
-			resources.put(type, current + amount);
-		}
-	}
-
-	/**
-	 * 
-	 * @param type 
-	 * @return 
-	 */
-	public int getAmount(ResourceType type) {
-		Integer amount = resources.get(type);
-		return amount != null ? amount : 0;
 	}
 
 	/**
@@ -110,13 +76,7 @@ public class ResourceHand {
 	 * @param cost 
 	 * @return 
 	 */
-	public boolean canAfford(Map<ResourceType, Integer> cost) {
-		for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-			if (getAmount(entry.getKey()) < entry.getValue()) {
-				return false;
-			}
-		}
-		return true;
+	public boolean canAfford(EMap cost) {
 	}
 
 	/**
@@ -124,17 +84,6 @@ public class ResourceHand {
 	 * @param cost 
 	 * @return 
 	 */
-	public boolean spend(Map<ResourceType, Integer> cost) {
-		if (!canAfford(cost)) {
-			return false;
-		}
-		
-		for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-			ResourceType type = entry.getKey();
-			Integer amount = entry.getValue();
-			resources.put(type, resources.get(type) - amount);
-		}
-		
-		return true;
+	public boolean spend(EMap cost) {
 	}
 }

@@ -28,10 +28,7 @@ public class Tile {
 	 * @param resourceType 
 	 * @param number 
 	 */
-	public Tile(int id, ResourceType resourceType, int number) {
-		this.id = id;
-		this.resourceType = resourceType;
-		this.number = number;
+	public void Tile(catandomainmodel.Tile.int id, ResourceType resourceType, int number) {
 	}
 
 	/**
@@ -39,7 +36,6 @@ public class Tile {
 	 * @return 
 	 */
 	public int getId() {
-		return id;
 	}
 
 	/**
@@ -47,7 +43,6 @@ public class Tile {
 	 * @return 
 	 */
 	public ResourceType getResourceType() {
-		return resourceType;
 	}
 
 	/**
@@ -55,6 +50,5 @@ public class Tile {
 	 * @return 
 	 */
 	public int getNumber() {
-		return number;
 	}
 }

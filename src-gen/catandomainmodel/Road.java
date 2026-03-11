@@ -23,9 +23,7 @@ public class Road {
 	 * @param owner 
 	 * @param edge 
 	 */
-	public Road(Player owner, Edge edge) {
-		this.owner = owner;
-		this.edge = edge;
+	public void Road(Player owner, Edge edge) {
 	}
 
 	/**
@@ -33,7 +31,6 @@ public class Road {
 	 * @return 
 	 */
 	public Edge getEdge() {
-		return edge;
 	}
 
 	/**
@@ -41,6 +38,5 @@ public class Road {
 	 * @return 
 	 */
 	public Player getOwner() {
-		return owner;
 	}
 }

@@ -8,28 +8,33 @@ package catandomainmodel;
 /**
  * 
  */
-public class Action {
+public enum ActionType {
 	/**
 	 * 
 	 */
-	private int roundNumber;
+	ROLL,
 	/**
 	 * 
 	 */
-	private int playerID;
+	BUILD_SETTLEMENT,
 	/**
 	 * 
 	 */
-	private String description;
+	BUILD_CITY,
 	/**
 	 * 
 	 */
-	public ActionType actiontype;
-
+	BUILD_ROAD,
 	/**
 	 * 
-	 * @return 
 	 */
-	public String toString() {
-	}
+	TRADE,
+	/**
+	 * 
+	 */
+	PASS,
+	/**
+	 * 
+	 */
+	LIST;
 }

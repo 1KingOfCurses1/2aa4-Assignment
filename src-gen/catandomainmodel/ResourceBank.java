@@ -4,9 +4,6 @@
 
 package catandomainmodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /************************************************************/
 /**
  * 
@@ -15,19 +12,12 @@ public class ResourceBank {
 	/**
 	 * 
 	 */
-	private Map<ResourceType, Integer> availableResources;
+	private EMap availableResources;
 
 	/**
 	 * 
 	 */
-	public ResourceBank() {
-		availableResources = new HashMap<>();
-		// Initialize with 19 of each resource type
-		availableResources.put(ResourceType.BRICK, 19);
-		availableResources.put(ResourceType.LUMBER, 19);
-		availableResources.put(ResourceType.WOOL, 19);
-		availableResources.put(ResourceType.GRAIN, 19);
-		availableResources.put(ResourceType.ORE, 19);
+	public void ResourceBank() {
 	}
 
 	/**
@@ -37,8 +27,6 @@ public class ResourceBank {
 	 * @return 
 	 */
 	public boolean hasResource(ResourceType type, int amount) {
-		Integer available = availableResources.get(type);
-		return available != null && available >= amount;
 	}
 
 	/**
@@ -48,11 +36,6 @@ public class ResourceBank {
 	 * @return 
 	 */
 	public boolean takeResource(ResourceType type, int amount) {
-		if (hasResource(type, amount)) {
-			availableResources.put(type, availableResources.get(type) - amount);
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -61,8 +44,6 @@ public class ResourceBank {
 	 * @return 
 	 */
 	public int getRemainingCount(ResourceType type) {
-		Integer count = availableResources.get(type);
-		return count != null ? count : 0;
 	}
 
 	/**
@@ -72,9 +53,5 @@ public class ResourceBank {
 	 * @return 
 	 */
 	public void returnResource(ResourceType type, int amount) {
-		Integer current = availableResources.get(type);
-		if (current != null) {
-			availableResources.put(type, current + amount);
-		}
 	}
 }

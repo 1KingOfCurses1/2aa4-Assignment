@@ -4,9 +4,6 @@
 
 package catandomainmodel;
 
-import java.util.List;
-import java.util.ArrayList;
-
 /************************************************************/
 /**
  * 
@@ -15,15 +12,39 @@ public class Board {
 	/**
 	 * 
 	 */
-	private List<Tile> tiles;
+	private Node[] node;
 	/**
 	 * 
 	 */
-	private List<Node> nodes;
+	private Edge[] edge;
 	/**
 	 * 
 	 */
-	private List<Edge> edges;
+	private List[] tiles;
+	/**
+	 * 
+	 */
+	private List[] nodes;
+	/**
+	 * 
+	 */
+	private List[] edges;
+	/**
+	 * 
+	 */
+	private Node[] node;
+	/**
+	 * 
+	 */
+	private Tile[] tile;
+	/**
+	 * 
+	 */
+	private Edge[] edge;
+	/**
+	 * 
+	 */
+	public Robber robber;
 
 	/**
 	 * 
@@ -31,10 +52,7 @@ public class Board {
 	 * @param nodes 
 	 * @param edges 
 	 */
-	public Board(List<Tile> tiles, List<Node> nodes, List<Edge> edges) {
-		this.tiles = tiles;
-		this.nodes = nodes;
-		this.edges = edges;
+	public void Board(List tiles, List nodes, List edges) {
 	}
 
 	/**
@@ -43,12 +61,6 @@ public class Board {
 	 * @return 
 	 */
 	public Tile getTile(int id) {
-		for (Tile tile : tiles) {
-			if (tile.getId() == id) {
-				return tile;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -57,12 +69,6 @@ public class Board {
 	 * @return 
 	 */
 	public Node getNode(int id) {
-		for (Node node : nodes) {
-			if (node.getId() == id) {
-				return node;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -71,12 +77,6 @@ public class Board {
 	 * @return 
 	 */
 	public Edge getEdge(int id) {
-		for (Edge edge : edges) {
-			if (edge.getId() == id) {
-				return edge;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -86,19 +86,15 @@ public class Board {
 	 * @return 
 	 */
 	public boolean isValidSettlementPlacement(Node node, Player player) {
-		// To be implemented
-		return false;
 	}
 
 	/**
 	 * 
 	 * @param edge 
-	 * @param player 
+	 * @param Player 
 	 * @return 
 	 */
-	public boolean isValidRoadPlacement(Edge edge, Player player) {
-		// To be implemented
-		return false;
+	public boolean isValidRoadPlacement(Edge edge, Player Player) {
 	}
 
 	/**
@@ -108,8 +104,6 @@ public class Board {
 	 * @return 
 	 */
 	public boolean isValidCityPlacement(Node node, Player player) {
-		// To be implemented
-		return false;
 	}
 
 	/**
@@ -117,9 +111,7 @@ public class Board {
 	 * @param node 
 	 * @return 
 	 */
-	public List<Node> getAdjacentNodes(Node node) {
-		// To be implemented
-		return new ArrayList<>();
+	public List getAdjacentNodes(Node node) {
 	}
 
 	/**
@@ -129,8 +121,6 @@ public class Board {
 	 * @return 
 	 */
 	public boolean hasAdjacentStructures(Node node, Player player) {
-		// To be implemented
-		return false;
 	}
 
 	/**
@@ -138,8 +128,6 @@ public class Board {
 	 * @param node 
 	 * @return 
 	 */
-	public List<Edge> getAdjacentEdges(Node node) {
-		// To be implemented
-		return new ArrayList<>();
+	public List getAdjacentEdges(Node node) {
 	}
 }

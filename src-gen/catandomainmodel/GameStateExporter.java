@@ -8,28 +8,18 @@ package catandomainmodel;
 /**
  * 
  */
-public class Action {
+public class GameStateExporter {
 	/**
 	 * 
 	 */
-	private int roundNumber;
-	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
-	/**
-	 * 
-	 */
-	public ActionType actiontype;
+	public void write(game: Game): void() {
+	}
 
 	/**
 	 * 
-	 * @return 
 	 */
-	public String toString() {
+	public void getFilePath():
+
+	String() {
 	}
 }

@@ -12,18 +12,7 @@ public class Settlement extends Structure {
 	/**
 	 * 
 	 * @param owner 
-	 * @param location 
 	 */
-	public Settlement(Player owner, Node location) {
-		super(owner, location);
-	}
-
-	/**
-	 * 
-	 * @return 
-	 */
-	@Override
-	public int getVictoryPoints() {
-		return 1;
+	public void Settlement(Player owner) {
 	}
 }

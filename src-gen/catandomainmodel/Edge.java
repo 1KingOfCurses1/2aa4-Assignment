@@ -4,9 +4,6 @@
 
 package catandomainmodel;
 
-import java.util.List;
-import java.util.ArrayList;
-
 /************************************************************/
 /**
  * 
@@ -16,18 +13,12 @@ public class Edge {
 	 * 
 	 */
 	private int id;
-	/**
-	 * 
-	 */
-	private List<Node> nodes;
 
 	/**
 	 * 
 	 * @param id 
 	 */
-	public Edge(int id) {
-		this.id = id;
-		this.nodes = new ArrayList<>();
+	public void Edge(int id) {
 	}
 
 	/**
@@ -35,24 +26,12 @@ public class Edge {
 	 * @return 
 	 */
 	public int getId() {
-		return id;
 	}
 
 	/**
 	 * 
 	 * @return 
 	 */
-	public List<Node> getNodes() {
-		return nodes;
-	}
-
-	/**
-	 * 
-	 * @param node 
-	 */
-	public void addNode(Node node) {
-		if (nodes.size() < 2) {
-			nodes.add(node);
-		}
+	public List getNodes() {
 	}
 }

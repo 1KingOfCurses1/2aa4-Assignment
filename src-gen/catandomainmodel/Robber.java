@@ -8,28 +8,23 @@ package catandomainmodel;
 /**
  * 
  */
-public class Action {
+public class Robber {
 	/**
 	 * 
 	 */
-	private int roundNumber;
-	/**
-	 * 
-	 */
-	private int playerID;
-	/**
-	 * 
-	 */
-	private String description;
-	/**
-	 * 
-	 */
-	public ActionType actiontype;
+	public Tile location;
 
 	/**
 	 * 
-	 * @return 
 	 */
-	public String toString() {
+	public void move(tile: Tile): void() {
+	}
+
+	/**
+	 * 
+	 */
+	public void getLocation():
+
+	Tile() {
 	}
 }

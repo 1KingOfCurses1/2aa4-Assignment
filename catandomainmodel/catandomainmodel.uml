@@ -127,7 +127,6 @@
     </ownedOperation>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_C-OE4PxiEfCGipyYfj5Ccw" name="City">
-    <generalization xmi:type="uml:Generalization" xmi:id="_pnIukPxmEfCGipyYfj5Ccw" general="_CjpBsPxiEfCGipyYfj5Ccw"/>
     <generalization xmi:type="uml:Generalization" xmi:id="_zobZAB0CEfGGMYCgea8-dA" general="_8J-w8PxhEfCGipyYfj5Ccw"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_IXudEP4LEfC-tZIOFZ4HaA" name="City">
       <ownedParameter xmi:type="uml:Parameter" xmi:id="_JyXPEP4LEfC-tZIOFZ4HaA" name="owner" type="_v6RYUP1dEfC4MsAcGpH2Tw"/>

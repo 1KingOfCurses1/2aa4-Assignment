@@ -1118,17 +1118,6 @@
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i5Rk4PxlEfCGipyYfj5Ccw" id="(0.6,0.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i5Rk4fxlEfCGipyYfj5Ccw" id="(0.6644518272425249,0.0)"/>
   </edges>
-  <edges xmi:type="notation:Connector" xmi:id="_pnWJ8PxmEfCGipyYfj5Ccw" type="Generalization_Edge" source="_C-P6EPxiEfCGipyYfj5Ccw" target="_Cjrd8PxiEfCGipyYfj5Ccw">
-    <children xmi:type="notation:DecorationNode" xmi:id="_pnWJ8_xmEfCGipyYfj5Ccw" type="Generalization_StereotypeLabel">
-      <styles xmi:type="notation:BooleanValueStyle" xmi:id="_fh4QkP08EfC4MsAcGpH2Tw" name="IS_UPDATED_POSITION" booleanValue="true"/>
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_pnWJ9PxmEfCGipyYfj5Ccw" y="40"/>
-    </children>
-    <styles xmi:type="notation:FontStyle" xmi:id="_pnWJ8fxmEfCGipyYfj5Ccw"/>
-    <element xmi:type="uml:Generalization" href="catandomainmodel.uml#_pnIukPxmEfCGipyYfj5Ccw"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_pnWJ8vxmEfCGipyYfj5Ccw" points="[160, 478, -643984, -643984]$[140, 398, -643984, -643984]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_pnmBkPxmEfCGipyYfj5Ccw" id="(0.6,0.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_pnmBkfxmEfCGipyYfj5Ccw" id="(0.4,1.0)"/>
-  </edges>
   <edges xmi:type="notation:Connector" xmi:id="_ueCqsP04EfC4MsAcGpH2Tw" type="Association_Edge" source="_DT4y4PxiEfCGipyYfj5Ccw" target="_Bujz0PxiEfCGipyYfj5Ccw">
     <children xmi:type="notation:DecorationNode" xmi:id="_ueD40P04EfC4MsAcGpH2Tw" type="Association_StereotypeLabel">
       <styles xmi:type="notation:BooleanValueStyle" xmi:id="_gWkc4P08EfC4MsAcGpH2Tw" name="IS_UPDATED_POSITION" booleanValue="true"/>

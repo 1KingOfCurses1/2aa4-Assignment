@@ -667,10 +667,6 @@
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8N2GgR2NEfG7xZSZVnMkDA"/>
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8N2Ggh2NEfG7xZSZVnMkDA" value="1"/>
     </ownedAttribute>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_98DfUh2OEfG7xZSZVnMkDA" name="devcarddeck" type="_-xlggB2LEfG7xZSZVnMkDA" aggregation="composite" association="_977jgB2OEfG7xZSZVnMkDA">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_98EGYB2OEfG7xZSZVnMkDA"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_98EtcB2OEfG7xZSZVnMkDA" value="1"/>
-    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Association" xmi:id="_8NuxwB2NEfG7xZSZVnMkDA" memberEnd="_8N2GgB2NEfG7xZSZVnMkDA _8N2tkB2NEfG7xZSZVnMkDA">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8N1fcB2NEfG7xZSZVnMkDA" source="org.eclipse.papyrus">
@@ -680,16 +676,14 @@
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_-xlggB2LEfG7xZSZVnMkDA" name="DevCardDeck">
     <ownedAttribute xmi:type="uml:Property" xmi:id="_SklUcB2NEfG7xZSZVnMkDA" name="cards: List&lt;DevCard>" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_XIwmEh2UEfG7xZSZVnMkDA" name="devcard" type="_jMvZgB2NEfG7xZSZVnMkDA" aggregation="composite" association="_XIncIB2UEfG7xZSZVnMkDA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XIybQB2UEfG7xZSZVnMkDA"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XIzCUB2UEfG7xZSZVnMkDA" value="1"/>
+    </ownedAttribute>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_OxNJcB2NEfG7xZSZVnMkDA" name="draw(): DevCard" visibility="private"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_WZyrcB2NEfG7xZSZVnMkDA" name="shuffle(): void" visibility="private"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_Y39-EB2NEfG7xZSZVnMkDA" name="isEmpty(): boolean" visibility="private"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_bPUP8B2NEfG7xZSZVnMkDA" name="remainingCount(): int" visibility="private"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_977jgB2OEfG7xZSZVnMkDA" memberEnd="_98DfUh2OEfG7xZSZVnMkDA _98EtcR2OEfG7xZSZVnMkDA">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_98DfUB2OEfG7xZSZVnMkDA" source="org.eclipse.papyrus">
-      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_98DfUR2OEfG7xZSZVnMkDA" key="nature" value="UML_Nature"/>
-    </eAnnotations>
-    <ownedEnd xmi:type="uml:Property" xmi:id="_98EtcR2OEfG7xZSZVnMkDA" name="devcard" type="_jMvZgB2NEfG7xZSZVnMkDA" association="_977jgB2OEfG7xZSZVnMkDA"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_v0TFAB2PEfG7xZSZVnMkDA" name="DevCardHand">
     <ownedAttribute xmi:type="uml:Property" xmi:id="_bRGRQB2QEfG7xZSZVnMkDA" name="cards: List&lt;DevCard>" visibility="private"/>
@@ -720,6 +714,12 @@
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_rswV8B2REfG7xZSZVnMkDA" key="nature" value="UML_Nature"/>
     </eAnnotations>
     <ownedEnd xmi:type="uml:Property" xmi:id="_rsxkER2REfG7xZSZVnMkDA" name="game" type="_ANRAMPxiEfCGipyYfj5Ccw" association="_rsrdcB2REfG7xZSZVnMkDA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_XIncIB2UEfG7xZSZVnMkDA" memberEnd="_XIwmEh2UEfG7xZSZVnMkDA _XIzpYB2UEfG7xZSZVnMkDA">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_XIwmEB2UEfG7xZSZVnMkDA" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XIwmER2UEfG7xZSZVnMkDA" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_XIzpYB2UEfG7xZSZVnMkDA" name="devcarddeck" type="_-xlggB2LEfG7xZSZVnMkDA" association="_XIncIB2UEfG7xZSZVnMkDA"/>
   </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_MqFZQP0-EfC4MsAcGpH2Tw">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_MqMuAP0-EfC4MsAcGpH2Tw" source="http://www.eclipse.org/uml2/2.0.0/UML">

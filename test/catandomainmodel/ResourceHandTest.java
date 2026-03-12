@@ -78,4 +78,16 @@ class ResourceHandTest {
         assertFalse(hand.spend(badCost), "spend should fail when not affordable");
         assertEquals(beforeTotal, hand.getTotalCards(), "total should not change after failed spend");
     }
+
+    // Boundary testing: exactly matching the cost is the boundary between success
+    // and failure
+    @Timeout(value = DEFAULT_TIMEOUT_MS, unit = TimeUnit.MILLISECONDS)
+    @Test
+    void testCanAffordExactBoundary() {
+        hand.add(ResourceType.BRICK, 4);
+        Map<ResourceType, Integer> cost = new EnumMap<>(ResourceType.class);
+        cost.put(ResourceType.BRICK, 4);
+
+        assertTrue(hand.canAfford(cost), "Should afford when holdings EXACTLY match cost (boundary)");
+    }
 }

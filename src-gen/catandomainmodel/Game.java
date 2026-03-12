@@ -5,6 +5,7 @@
 package catandomainmodel;
 
 import java.security.SecureRandom;
+import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,6 +29,7 @@ public class Game {
     private ResourceBank resourceBank;
     private GameStateExporter gameStateExporter;
     private Random random;
+    private Scanner scanner;
 
     public Game(Board board, List<Player> players, List<IAgent> agents) {
         this.board = board;
@@ -38,10 +40,15 @@ public class Game {
         this.resourceBank = new ResourceBank();
         this.gameStateExporter = new GameStateExporter();
         this.random = new SecureRandom();
+        this.scanner = new Scanner(System.in);
     }
 
     public int getRound() {
         return round;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
     }
 
     public Board getBoard() {
@@ -90,9 +97,26 @@ public class Game {
     public void playRound() {
         round++;
         for (int i = 0; i < agents.size(); i++) {
-            processPlayerTurn(agents.get(i), players.get(i));
+            IAgent agent = agents.get(i);
+
+            // R2.4: Step forward functionality
+            if (!(agent instanceof HumanAgent)) {
+                waitForGo();
+            }
+
+            processPlayerTurn(agent, players.get(i));
             if (checkTermination()) {
                 return;
+            }
+        }
+    }
+
+    private void waitForGo() {
+        LOGGER.info(">>> [Step Forward] Press 'go' to proceed to next agent's turn <<<");
+        while (scanner.hasNextLine()) {
+            String input = scanner.nextLine().trim();
+            if (input.equalsIgnoreCase("go")) {
+                break;
             }
         }
     }
@@ -200,10 +224,8 @@ public class Game {
 
         List<String> validRoads = new ArrayList<>();
         for (Edge e : board.getEdges()) {
-            if (board.isValidRoadPlacement(e, player)) {
-                if (e.getNodes().size() == 2) {
-                    validRoads.add(String.format("%d-%d", e.getNodes().get(0).getId(), e.getNodes().get(1).getId()));
-                }
+            if (board.isValidRoadPlacement(e, player) && e.getNodes().size() == 2) {
+                validRoads.add(String.format("%d-%d", e.getNodes().get(0).getId(), e.getNodes().get(1).getId()));
             }
         }
 
@@ -220,7 +242,7 @@ public class Game {
      * placement.
      */
     private void applyAction(Action action, Player player) {
-        if (action.getActionType() == null)
+        if (action == null || action.getActionType() == null)
             return;
 
         switch (action.getActionType()) {
@@ -365,10 +387,10 @@ public class Game {
     }
 
     private void processTileResources(Tile tile) {
-        for (Node node : board.getNodes()) {
+        for (Node node : tile.getNodes()) {
             if (node.getStructure() != null) {
                 Player owner = node.getStructure().getOwner();
-                int amount = node.getStructure().getVictoryPoints();
+                int amount = (node.getStructure() instanceof City) ? 2 : 1;
                 if (resourceBank.hasResource(tile.getResourceType(), amount)) {
                     resourceBank.takeResource(tile.getResourceType(), amount);
                     owner.getResourceHand().add(tile.getResourceType(), amount);
@@ -395,14 +417,22 @@ public class Game {
             Tile target = tiles.get(random.nextInt(tiles.size()));
             board.getRobber().move(target);
             LOGGER.log(Level.INFO, "  Robber moved to tile {0}", target.getId());
+            stealFromAdjacentPlayer(target, roller);
         }
+    }
 
+    private void stealFromAdjacentPlayer(Tile target, Player roller) {
         List<Player> stealCandidates = new ArrayList<>();
-        for (Player p : players) {
-            if (p.getId() != roller.getId() && p.getResourceHand().getTotalCards() > 0) {
-                stealCandidates.add(p);
+        for (Node n : target.getNodes()) {
+            if (n.getStructure() != null) {
+                Player victim = n.getStructure().getOwner();
+                if (victim.getId() != roller.getId() && victim.getResourceHand().getTotalCards() > 0
+                        && !stealCandidates.contains(victim)) {
+                    stealCandidates.add(victim);
+                }
             }
         }
+
         if (!stealCandidates.isEmpty()) {
             Player victim = stealCandidates.get(random.nextInt(stealCandidates.size()));
             ResourceType stolenType = getRandomOwnedResource(victim);

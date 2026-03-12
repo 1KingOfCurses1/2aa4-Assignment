@@ -27,6 +27,7 @@ public class Demonstrator {
         // --- Build the board ---
         List<Tile> tiles = createTiles();
         List<Node> nodes = createNodes();
+        mapNodesToTiles(tiles, nodes);
         List<Edge> edges = createEdges(nodes);
         Board board = new Board(tiles, nodes, edges);
 
@@ -99,6 +100,45 @@ public class Demonstrator {
     }
 
     // ---- Board Setup Helpers ----
+
+    /**
+     * Maps the 6 encompassing nodes for each of the 19 tiles.
+     */
+    private static void mapNodesToTiles(List<Tile> tiles, List<Node> nodes) {
+        // Standard Catan node-to-tile mapping (topology dependent)
+        int[][] mapping = {
+                { 0, 1, 2, 3, 4, 5 }, // Tile 0
+                { 0, 5, 13, 15, 18, 17 }, // Tile 1
+                { 1, 2, 6, 23, 22, 21 }, // Tile 2
+                { 2, 3, 9, 8, 7, 6 }, // Tile 3
+                { 3, 4, 12, 11, 10, 9 }, // Tile 4
+                { 4, 5, 13, 14, 11, 12 }, // Tile 5
+                { 0, 1, 21, 20, 19, 17 }, // Tile 6
+                { 15, 18, 38, 39, 36, 35 }, // Tile 7
+                { 5, 13, 15, 35, 34, 14 }, // Tile 8
+                { 11, 12, 14, 34, 33, 32 }, // Tile 9
+                { 10, 11, 32, 31, 30, 29 }, // Tile 10
+                { 8, 9, 10, 29, 28, 27 }, // Tile 11
+                { 7, 8, 27, 26, 25, 24 }, // Tile 12
+                { 6, 7, 24, 23, 52, 53 }, // Tile 13
+                { 22, 23, 52, 51, 50, 49 }, // Tile 14
+                { 21, 22, 49, 48, 47, 20 }, // Tile 15
+                { 19, 20, 47, 46, 45, 44 }, // Tile 16
+                { 16, 17, 19, 44, 43, 41 }, // Tile 17
+                { 16, 18, 38, 42, 40, 41 } // Tile 18
+        };
+
+        for (int i = 0; i < mapping.length && i < tiles.size(); i++) {
+            Tile t = tiles.get(i);
+            for (int nodeId : mapping[i]) {
+                for (Node n : nodes) {
+                    if (n.getId() == nodeId) {
+                        t.addNode(n);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Creates the 19 standard Catan hex tiles.

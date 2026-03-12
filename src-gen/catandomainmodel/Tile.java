@@ -4,6 +4,9 @@
 
 package catandomainmodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /************************************************************/
 /**
  * A hex tile on the board with a resource type and dice number.
@@ -13,11 +16,13 @@ public class Tile {
     private int id;
     private ResourceType resourceType;
     private int number;
+    private List<Node> nodes;
 
     public Tile(int id, ResourceType resourceType, int number) {
         this.id = id;
         this.resourceType = resourceType;
         this.number = number;
+        this.nodes = new ArrayList<>();
     }
 
     public int getId() {
@@ -30,5 +35,15 @@ public class Tile {
 
     public int getNumber() {
         return number;
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    public void addNode(Node node) {
+        if (node != null && !nodes.contains(node)) {
+            nodes.add(node);
+        }
     }
 }

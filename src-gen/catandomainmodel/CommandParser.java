@@ -25,7 +25,7 @@ public class CommandParser {
     // Patterns compiled once for performance
     private static final Pattern ROLL_PATTERN = Pattern.compile("^\\s*roll\\s*$", Pattern.CASE_INSENSITIVE);
     private static final Pattern LIST_PATTERN = Pattern.compile("^\\s*list\\s*$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PASS_PATTERN = Pattern.compile("^\\s*pass\\s*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PASS_PATTERN = Pattern.compile("^\\s*(pass|go)\\s*$", Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_SETTLEMENT_PATTERN = Pattern.compile("^\\s*build\\s+settlement\\s+(\\d+)\\s*$",
             Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_CITY_PATTERN = Pattern.compile("^\\s*build\\s+city\\s+(\\d+)\\s*$",

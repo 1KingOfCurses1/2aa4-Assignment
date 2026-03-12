@@ -33,3 +33,6 @@ tmp/
 base_map.json
 state.json
 scraped_boards/
+
+*.pdf
+*.png

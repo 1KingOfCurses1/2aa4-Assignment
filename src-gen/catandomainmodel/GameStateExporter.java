@@ -15,8 +15,8 @@ public class GameStateExporter {
     private static final String JSON_START_BRACE = "    {";
     private static final String DESERT_LITERAL = "DESERT";
 
-    private static final String DEFAULT_BASE_MAP_PATH = "base_map.json";
-    private static final String DEFAULT_STATE_PATH = "state.json";
+    private static final String DEFAULT_BASE_MAP_PATH = "../2aa4-2026-base/assignments/visualize/base_map.json";
+    private static final String DEFAULT_STATE_PATH = "../2aa4-2026-base/assignments/visualize/state.json";
 
     private String baseMapPath;
     private String statePath;

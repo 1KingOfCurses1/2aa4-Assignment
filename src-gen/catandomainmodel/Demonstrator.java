@@ -49,8 +49,9 @@ public class Demonstrator {
         LOGGER.log(Level.INFO, "Game created with {0} players.", players.size());
         LOGGER.info("Player 4 is the human player.\n");
 
-        // Write the base map once before starting the game
+        // Write the base map and initial state before starting the game
         game.getGameStateExporter().writeBaseMap(board);
+        game.getGameStateExporter().writeState(game);
 
         // Run the simulation
         game.startGame();
@@ -85,6 +86,7 @@ public class Demonstrator {
                     "state.json",
                     "--out-dir",
                     "scraped_boards");
+            pb.directory(visFile.getParentFile());
             pb.inheritIO(); // Pipe python output to java console
             Process process = pb.start();
             process.waitFor();

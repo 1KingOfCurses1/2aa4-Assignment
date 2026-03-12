@@ -114,8 +114,8 @@ class BoardTest {
         p.addStructure(s); // this sets the structure on node 10
 
         // Node 11 should have an adjacent structure
-        assertTrue(board.hasAdjacentStructures(nodes.get(1), p));
+        assertTrue(board.hasAdjacentStructures(nodes.get(1)));
         // Node 12 should not
-        assertFalse(board.hasAdjacentStructures(nodes.get(2), p));
+        assertFalse(board.hasAdjacentStructures(nodes.get(2)));
     }
 }

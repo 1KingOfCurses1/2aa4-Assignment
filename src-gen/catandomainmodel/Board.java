@@ -78,7 +78,8 @@ public class Board {
             }
         }
         // Must have a connecting road owned by this player (unless it is the
-        // setup phase, which we approximate by checking if the player has no structures)
+        // setup phase, which we approximate by checking if the player has no
+        // structures)
         if (!player.getStructures().isEmpty()) {
             boolean hasConnectingRoad = false;
             List<Edge> adjEdges = getAdjacentEdges(node);
@@ -101,27 +102,40 @@ public class Board {
      * 2. The player has a structure or road connected to one end.
      */
     public boolean isValidRoadPlacement(Edge edge, Player player) {
-        if (edge == null || player == null) {
+        if (edge == null || player == null || edge.getRoad() != null) {
             return false;
         }
-        // Edge must be empty
-        if (edge.getRoad() != null) {
-            return false;
-        }
-        // Must connect to a structure or existing road owned by the player
+        return canConnectToNetwork(edge, player);
+    }
+
+    private boolean canConnectToNetwork(Edge edge, Player player) {
         for (Node n : edge.getNodes()) {
-            // Connected structure owned by this player?
-            if (n.getStructure() != null
-                    && n.getStructure().getOwner().getId() == player.getId()) {
+            // Friendly building always allows a road
+            if (isFriendlyStructureAt(n, player)) {
                 return true;
             }
-            // Connected road owned by this player?
-            List<Edge> adjEdges = getAdjacentEdges(n);
-            for (Edge adj : adjEdges) {
-                if (adj != edge && adj.getRoad() != null
-                        && adj.getRoad().getOwner().getId() == player.getId()) {
-                    return true;
-                }
+            // Friendly road allows extension, unless blocked by enemy
+            if (!isBlockedByEnemy(n, player) && hasFriendlyConnectingRoad(edge, n, player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isFriendlyStructureAt(Node node, Player player) {
+        return node.getStructure() != null && node.getStructure().getOwner().getId() == player.getId();
+    }
+
+    private boolean isBlockedByEnemy(Node node, Player player) {
+        return node.getStructure() != null && node.getStructure().getOwner().getId() != player.getId();
+    }
+
+    private boolean hasFriendlyConnectingRoad(Edge targetEdge, Node node, Player player) {
+        List<Edge> adjEdges = getAdjacentEdges(node);
+        for (Edge adj : adjEdges) {
+            if (adj.getId() != targetEdge.getId() && adj.getRoad() != null
+                    && adj.getRoad().getOwner().getId() == player.getId()) {
+                return true;
             }
         }
         return false;
@@ -183,7 +197,7 @@ public class Board {
     /**
      * Returns true if any adjacent node has a structure (used for distance rule).
      */
-    public boolean hasAdjacentStructures(Node node, Player player) {
+    public boolean hasAdjacentStructures(Node node) {
         List<Node> adjacent = getAdjacentNodes(node);
         for (Node adj : adjacent) {
             if (adj.getStructure() != null) {

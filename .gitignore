@@ -28,3 +28,8 @@ tmp/
 # --- PDFs --
 *.pdf
 
+
+# --- Game Simulation ---
+base_map.json
+state.json
+scraped_boards/

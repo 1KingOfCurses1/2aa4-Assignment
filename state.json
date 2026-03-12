@@ -1,5 +1,10 @@
 {
-  "round": 0,
-  "buildings": [],
-  "roads": []
+  "round": 1,
+  "robber_tile": 13,
+  "buildings": [
+    {"node": 0, "owner": "ORANGE", "type": "SETTLEMENT"}
+  ],
+  "roads": [
+    {"a": 0, "b": 1, "owner": "ORANGE"}
+  ]
 }

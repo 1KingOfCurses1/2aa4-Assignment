@@ -54,6 +54,18 @@ public class Player {
     }
 
     /**
+     * Removes a structure and updates victory points accordingly.
+     */
+    public void removeStructure(Structure s) {
+        if (structures.remove(s)) {
+            victoryPoints -= s.getVictoryPoints();
+            if (s.getLocation() != null && s.getLocation().getStructure() == s) {
+                s.getLocation().setStructure(null);
+            }
+        }
+    }
+
+    /**
      * Returns true if the player has more than 7 resource cards (robber rule).
      */
     public boolean needsToSpendCards() {

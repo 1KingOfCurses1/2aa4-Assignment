@@ -32,6 +32,8 @@ public class CommandParser {
             Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_ROAD_PATTERN = Pattern.compile("^\\s*build\\s+road\\s+(\\d+)\\s+(\\d+)\\s*$",
             Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNDO_PATTERN = Pattern.compile("^\\s*undo\\s*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REDO_PATTERN = Pattern.compile("^\\s*redo\\s*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Parses the given input string into an Action.
@@ -46,6 +48,18 @@ public class CommandParser {
         }
 
         Matcher m;
+
+        // undo
+        m = UNDO_PATTERN.matcher(input);
+        if (m.matches()) {
+            return new Action(0, 0, "UNDO", ActionType.UNDO);
+        }
+
+        // redo
+        m = REDO_PATTERN.matcher(input);
+        if (m.matches()) {
+            return new Action(0, 0, "REDO", ActionType.REDO);
+        }
 
         // roll
         m = ROLL_PATTERN.matcher(input);

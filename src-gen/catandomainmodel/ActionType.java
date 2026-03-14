@@ -24,6 +24,9 @@ public enum ActionType {
 	/**
 	 * 
 	 */
+	/**
+	 * 
+	 */
 	BUILD_ROAD,
 	/**
 	 * 
@@ -36,5 +39,13 @@ public enum ActionType {
 	/**
 	 * 
 	 */
-	LIST;
+	LIST,
+	/**
+	 * 
+	 */
+	UNDO,
+	/**
+	 * 
+	 */
+	REDO;
 }

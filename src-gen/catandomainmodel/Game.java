@@ -28,6 +28,7 @@ public class Game {
     private List<IAgent> agents;
     private ResourceBank resourceBank;
     private GameStateExporter gameStateExporter;
+    private CommandManager commandManager;
     private Random random;
     private Scanner scanner;
 
@@ -39,6 +40,7 @@ public class Game {
         this.configuration = new Configuration();
         this.resourceBank = new ResourceBank();
         this.gameStateExporter = new GameStateExporter();
+        this.commandManager = new CommandManager();
         this.random = new SecureRandom();
         this.scanner = new Scanner(System.in);
     }
@@ -148,9 +150,31 @@ public class Game {
             case LIST:
                 printList(player);
                 break;
+            case UNDO:
+                handleUndoAction();
+                break;
+            case REDO:
+                handleRedoAction();
+                break;
             default:
                 handleBuildAndApplyAction(action, player, turnState);
                 break;
+        }
+    }
+
+    private void handleUndoAction() {
+        if (commandManager.undo()) {
+            LOGGER.info("  Action undone successfully.");
+        } else {
+            LOGGER.info("  Nothing to undo.");
+        }
+    }
+
+    private void handleRedoAction() {
+        if (commandManager.redo()) {
+            LOGGER.info("  Action redone successfully.");
+        } else {
+            LOGGER.info("  Nothing to redo.");
         }
     }
 
@@ -263,25 +287,28 @@ public class Game {
     private void handleBuildSettlement(Action action, Player player) {
         try {
             String[] parts = action.getDescription().split(" ");
+            Node targetNode = null;
             if (parts.length > 1) {
                 int nodeId = Integer.parseInt(parts[1]);
                 Node n = board.getNode(nodeId);
                 if (n != null && board.isValidSettlementPlacement(n, player)) {
-                    Settlement s = new Settlement(player, n);
-                    player.addStructure(s);
-                    LOGGER.log(Level.INFO, "    Successfully built Settlement at node {0}", nodeId);
+                    targetNode = n;
                 } else {
                     LOGGER.log(Level.INFO, "    Failed: Invalid settlement placement at node {0}", nodeId);
                 }
             } else {
                 for (Node n : board.getNodes()) {
                     if (board.isValidSettlementPlacement(n, player)) {
-                        Settlement s = new Settlement(player, n);
-                        player.addStructure(s);
-                        LOGGER.log(Level.INFO, "    AI successfully built Settlement at node {0}", n.getId());
+                        targetNode = n;
                         break;
                     }
                 }
+            }
+
+            if (targetNode != null) {
+                GameCommand cmd = new BuildSettlementCommand(player, targetNode, resourceBank);
+                commandManager.executeCommand(cmd);
+                LOGGER.log(Level.INFO, "    Successfully built Settlement at node {0}", targetNode.getId());
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.SEVERE, "Failed to parse node ID for settlement", e);
@@ -291,29 +318,28 @@ public class Game {
     private void handleBuildCity(Action action, Player player) {
         try {
             String[] parts = action.getDescription().split(" ");
+            Node targetNode = null;
             if (parts.length > 1) {
                 int nodeId = Integer.parseInt(parts[1]);
                 Node n = board.getNode(nodeId);
                 if (n != null && board.isValidCityPlacement(n, player)) {
-                    City c = new City(player, n);
-                    player.getStructures()
-                            .removeIf(st -> st.getLocation() != null && st.getLocation().getId() == nodeId);
-                    player.addStructure(c);
-                    LOGGER.log(Level.INFO, "    Successfully built City at node {0}", nodeId);
+                    targetNode = n;
                 } else {
                     LOGGER.log(Level.INFO, "    Failed: Invalid city placement at node {0}", nodeId);
                 }
             } else {
                 for (Node n : board.getNodes()) {
                     if (board.isValidCityPlacement(n, player)) {
-                        City c = new City(player, n);
-                        player.getStructures()
-                                .removeIf(st -> st.getLocation() != null && st.getLocation().getId() == n.getId());
-                        player.addStructure(c);
-                        LOGGER.log(Level.INFO, "    AI successfully built City at node {0}", n.getId());
+                        targetNode = n;
                         break;
                     }
                 }
+            }
+
+            if (targetNode != null) {
+                GameCommand cmd = new BuildCityCommand(player, targetNode, resourceBank);
+                commandManager.executeCommand(cmd);
+                LOGGER.log(Level.INFO, "    Successfully built City at node {0}", targetNode.getId());
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.SEVERE, "Failed to parse node ID for city", e);
@@ -323,33 +349,37 @@ public class Game {
     private void handleBuildRoad(Action action, Player player) {
         try {
             String[] parts = action.getDescription().split(" ");
+            Edge targetEdge = null;
             if (parts.length > 2) {
                 int fromId = Integer.parseInt(parts[1]);
                 int toId = Integer.parseInt(parts[2]);
-                Edge targetEdge = findEdge(fromId, toId);
-                if (targetEdge == null) {
+                Edge target = findEdge(fromId, toId);
+                if (target == null) {
                     LOGGER.info(
                             () -> String.format("    Failed: No edge exists between nodes %d and %d", fromId, toId));
-                } else if (targetEdge.getRoad() != null) {
+                } else if (target.getRoad() != null) {
                     LOGGER.info(() -> String.format("    Failed: Edge %d-%d already has a road", fromId, toId));
-                } else if (!board.isValidRoadPlacement(targetEdge, player)) {
+                } else if (!board.isValidRoadPlacement(target, player)) {
                     LOGGER.info(() -> String.format(
                             "    Failed: Road at %d-%d must connect to your building or road (and not be blocked)",
                             fromId, toId));
                 } else {
-                    Road r = new Road(player, targetEdge);
-                    targetEdge.setRoad(r);
-                    LOGGER.info(() -> String.format("    Successfully built Road from %d to %d", fromId, toId));
+                    targetEdge = target;
                 }
             } else {
                 for (Edge e : board.getEdges()) {
                     if (board.isValidRoadPlacement(e, player)) {
-                        Road r = new Road(player, e);
-                        e.setRoad(r);
-                        LOGGER.log(Level.INFO, "    AI successfully built Road on edge {0}", e.getId());
+                        targetEdge = e;
                         break;
                     }
                 }
+            }
+
+            if (targetEdge != null) {
+                final Edge finalEdge = targetEdge;
+                GameCommand cmd = new BuildRoadCommand(player, finalEdge, resourceBank);
+                commandManager.executeCommand(cmd);
+                LOGGER.info(() -> String.format("    Successfully built Road on edge %d", finalEdge.getId()));
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.SEVERE, "Failed to parse node IDs for road", e);
